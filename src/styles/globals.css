@@ -1,13 +1,15 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #3b82f6;
-  --secondary: #64748b;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  --background: #0F0817;
+  --foreground: #E9D5FF;
+  --accent: #A855F7;
+  --secondary: #9F85B9;
+  --success: #86EFAC;
+  --warning: #FDE047;
+  --danger: #F87171;
 }
 
 @theme inline {
@@ -19,17 +21,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0F0817;
+    --foreground: #E9D5FF;
   }
 }
 
-body {
-  background: var(--background);
+html, body, #__next {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2E1065 0%, #0F0817 100%);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+}
+
+body {
   cursor: none;
+}
+
+/* Fix for 3D scene background */
+.scene-3d-container canvas {
+  background-color: transparent !important;
 }
 
 .cursor {
@@ -68,7 +79,301 @@ body {
 
 .grid-background {
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(15, 8, 23, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(168, 85, 247, 0.1);
+}
+
+/* Neon text effect */
+.neon-text {
+  color: #E9D5FF;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5),
+               0 0 20px rgba(168, 85, 247, 0.3),
+               0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+  color: #E9D5FF;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Card styles */
+.card {
+  background: rgba(15, 8, 23, 0.7);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(168, 85, 247, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(168, 85, 247, 0.2);
+}
+
+/* Scroll Reveal Animations - Premium Version */
+.scroll-reveal {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, 0) scale(1) !important;
+  filter: blur(0) !important;
+}
+
+/* Different reveal animations with advanced effects */
+.scroll-reveal-fade {
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(5px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-fade.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+}
+
+.scroll-reveal-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(40px);
+  filter: blur(2px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-up.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.scroll-reveal-down {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-40px);
+  filter: blur(2px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-down.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-40px);
+  filter: blur(2px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-left.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  filter: blur(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(40px);
+  filter: blur(2px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-right.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  filter: blur(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+  filter: blur(2px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-scale.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+/* Support for bidirectional animations */
+.scroll-reveal[data-scroll-direction="up"] {
+  --direction-multiplier: -1;
+}
+
+.scroll-reveal[data-scroll-direction="down"] {
+  --direction-multiplier: 1;
+}
+
+/* Premium scroll reveal effects */
+.scroll-reveal-rotate {
+  opacity: 0;
+  visibility: hidden;
+  transform: rotate(calc(var(--direction-multiplier, 1) * 10deg)) scale(0.9);
+  transform-origin: center;
+  filter: blur(3px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-rotate.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: rotate(0deg) scale(1);
+  filter: blur(0);
+}
+
+.scroll-reveal-flip {
+  opacity: 0;
+  visibility: hidden;
+  transform: perspective(1000px) rotateY(calc(var(--direction-multiplier, 1) * 30deg));
+  transform-origin: center;
+  filter: blur(2px);
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backface-visibility: hidden;
+}
+
+.scroll-reveal-flip.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: perspective(1000px) rotateY(0deg);
+  filter: blur(0);
+}
+
+.scroll-reveal-stagger {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(var(--direction-multiplier, 1) * 30px));
+  filter: blur(2px);
+  transition-property: transform, opacity, filter;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-stagger.scroll-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Persistence animations - respond to direction */
+[data-persistent="true"].scroll-reveal-up[data-scroll-direction="up"] {
+  transform: translateY(-40px);
+  opacity: 0;
+  filter: blur(2px);
+}
+
+[data-persistent="true"].scroll-reveal-down[data-scroll-direction="down"] {
+  transform: translateY(40px);
+  opacity: 0;
+  filter: blur(2px);
+}
+
+/* Enhanced delay classes with smoother timing */
+.reveal-delay-100 {
+  transition-delay: 0.1s;
+}
+
+.reveal-delay-200 {
+  transition-delay: 0.2s;
+}
+
+.reveal-delay-300 {
+  transition-delay: 0.3s;
+}
+
+.reveal-delay-400 {
+  transition-delay: 0.4s;
+}
+
+.reveal-delay-500 {
+  transition-delay: 0.5s;
+}
+
+.reveal-delay-600 {
+  transition-delay: 0.6s;
+}
+
+.reveal-delay-700 {
+  transition-delay: 0.7s;
+}
+
+.reveal-delay-800 {
+  transition-delay: 0.8s;
+}
+
+/* Sequential animation classes */
+.sequential-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--item-index, 0) * 0.1s);
+}
+
+.sequential-container:hover .sequential-item,
+.sequential-container.active .sequential-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Premium parallax effect */
+.parallax-scroll {
+  will-change: transform;
+  transform: translateY(calc(var(--scroll-ratio, 0) * var(--parallax-factor, 100px) * var(--direction-multiplier, 1)));
+  transition: transform 0.1s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* 3D tilt animation on scroll */
+.tilt-on-scroll {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) 
+    rotateX(calc(var(--scroll-ratio, 0) * var(--tilt-factor-x, 10deg) * var(--direction-multiplier, 1)))
+    rotateY(calc(var(--scroll-ratio, 0) * var(--tilt-factor-y, 5deg) * var(--direction-multiplier, 1)));
+  transition: transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Zoom effect on scroll */
+.zoom-on-scroll {
+  transform: scale(calc(1 + (var(--scroll-ratio, 0) * var(--zoom-factor, 0.2) * var(--direction-multiplier, 1))));
+  transition: transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Text blur effect */
+.text-blur-on-scroll {
+  filter: blur(calc((1 - var(--scroll-ratio, 0)) * var(--blur-factor, 5px)));
+  transition: filter 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
