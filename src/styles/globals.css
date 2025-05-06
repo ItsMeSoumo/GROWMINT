@@ -35,38 +35,12 @@ html, body, #__next {
 }
 
 body {
-  cursor: none;
+  cursor: default;
 }
 
 /* Fix for 3D scene background */
 .scene-3d-container canvas {
   background-color: transparent !important;
-}
-
-.cursor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: var(--accent);
-  pointer-events: none;
-  mix-blend-mode: difference;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
-}
-
-.cursor-follower {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.5;
-  transform: translate(-50%, -50%);
-  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
 }
 
 .hover-scale {
@@ -374,6 +348,42 @@ body {
 
 /* Text blur effect */
 .text-blur-on-scroll {
-  filter: blur(calc((1 - var(--scroll-ratio, 0)) * var(--blur-factor, 5px)));
-  transition: filter 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: filter 0.3s ease;
+  filter: blur(0);
+}
+
+.text-blur-on-scroll:hover {
+  filter: blur(3px);
+}
+
+/* Premium about page animations */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
 }
