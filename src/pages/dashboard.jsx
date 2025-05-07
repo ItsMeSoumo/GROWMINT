@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { FadeIn, SlideIn } from '@/components/animations';
 import { useAuth } from './_app';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 const DashboardCard = ({ title, value, color, icon }) => (
   <div className={`bg-background border border-foreground/10 rounded-xl p-6 hover-scale`}>
