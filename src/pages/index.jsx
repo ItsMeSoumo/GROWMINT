@@ -119,12 +119,13 @@ export default function Home() {
         {/* Google Fonts for premium typography */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
         <style jsx global>{`
           :root {
             --font-display: 'Playfair Display', serif;
             --font-luxury: 'Cormorant', serif;
             --font-body: 'Montserrat', sans-serif;
+            --font-modern: 'Raleway', sans-serif;
           }
           html, body {
             font-family: var(--font-body);
@@ -140,6 +141,10 @@ export default function Home() {
           }
           .font-body {
             font-family: var(--font-body);
+          }
+          .font-modern {
+            font-family: var(--font-modern);
+            letter-spacing: 0.03em;
           }
           h1, h2, h3, h4, h5, h6 {
             font-family: var(--font-display);
@@ -255,7 +260,7 @@ export default function Home() {
         </div>
         
           {/* Spline 3D Component */}
-          {/* <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
+          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             <div className="w-full h-full relative">
               <div style={{ 
                 position: 'absolute', 
@@ -276,7 +281,7 @@ export default function Home() {
                 />
         </div>
             </div>
-        </div> */}
+        </div>
         
         <div className="container mx-auto px-6 md:px-12 relative" style={{ zIndex: 10 }}>
           <div className="relative scroll-reveal scroll-reveal-fade flex flex-col md:flex-row items-center justify-between w-full gap-12">
@@ -291,12 +296,17 @@ export default function Home() {
                 </h1>
               </div>
               
-              <p className="text-xl md:text-2xl text-white/90 max-w-2xl mb-12 leading-relaxed font-light tracking-wide font-luxury scroll-reveal scroll-reveal-up reveal-delay-100">
-                Pioneering the next generation of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 font-medium">digital experiences</span> with premium design and cutting-edge technology solutions.
+              <p className="text-xl md:text-2xl text-white/90 max-w-2xl mb-12 leading-relaxed font-modern font-light tracking-wide scroll-reveal scroll-reveal-up reveal-delay-100">
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  className="inline-block drop-shadow-[0_2px_10px_rgba(255,255,255,0.1)]"
+                >
+                  Pioneering the next generation of <span className="text-transparent bg-clip-text bg-gradient-to-br from-violet-400 via-indigo-400 to-blue-500 font-medium">digital experiences</span> with <span className="relative italic after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-transparent after:via-blue-400/50 after:to-transparent">premium design</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-400">cutting-edge</span> technology solutions.
+                </motion.span>
               </p>
-              <div className="flex justify-start mb-12 mt-8">
-                <div className="w-28 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full"></div>
-              </div>
+              <div className="mt-10 mb-2"></div>
               <div className="flex flex-col md:flex-row gap-6 justify-start items-center">
                 <button 
                   onClick={() => scrollToSection('services')}
@@ -326,12 +336,21 @@ export default function Home() {
               <div className="absolute right-0 top-[60%] -translate-y-1/2 flex flex-row items-end gap-0 z-10 pr-1">
                 {/* Left card - Affiliate Network */}
                 <motion.div 
-                  className="w-40 md:w-48 h-52 md:h-56 bg-gradient-to-br from-black/80 to-purple-900/20 border border-indigo-500/30 rounded-lg shadow-2xl backdrop-blur-3xl flex flex-col items-start justify-center text-left px-5 py-5 opacity-90 scale-95 md:scale-100 rotate-3 md:mb-8 z-10"
-                  style={{ boxShadow: '0 10px 40px -10px rgba(138, 75, 255, 0.3), inset 0 0 20px rgba(124, 58, 237, 0.2)' }}
+                  className="w-40 md:w-48 h-52 md:h-56 rounded-lg shadow-xl scale-95 md:scale-100 rotate-3 md:mb-8 z-10 relative"
                   initial={{ opacity: 0, x: -40 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
                 >
+                  {/* Base layer with strong blur */}
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-indigo-500/50 overflow-hidden">
+                    {/* Light shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
+                  </div>
+                  
+                  {/* Content wrapper */}
+                  <div className="relative z-10 h-full w-full flex flex-col items-start justify-center px-5 py-5">
+                  {/* Glass shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-20 rounded-lg"></div>
                   {/* Card header with icon and label */}
                   <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent"></div>
                   <div className="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-violet-500/20 to-transparent"></div>
@@ -371,178 +390,191 @@ export default function Home() {
                       <div className="h-full w-[85%] bg-gradient-to-r from-violet-500 to-indigo-400 rounded-full"></div>
                     </div>
                   </div>
+                  </div>
                 </motion.div>
                 
                 {/* Center card - transaction dashboard */}
                 <motion.div 
-                  className="w-56 md:w-64 h-60 md:h-72 bg-gradient-to-br from-black/90 via-violet-950/20 to-indigo-950/20 border border-violet-500/40 rounded-lg shadow-2xl backdrop-blur-3xl flex flex-col items-center justify-start text-center px-4 pt-5 pb-3 z-20 scale-105 md:scale-110 md:mb-0 relative overflow-hidden"
-                  style={{ boxShadow: '0 15px 50px -12px rgba(139, 92, 246, 0.25), inset 0 0 30px rgba(139, 92, 246, 0.15)' }}
+                  className="w-56 md:w-64 h-60 md:h-72 rounded-lg shadow-xl z-20 scale-105 md:scale-110 md:mb-0 relative"
+                  style={{ boxShadow: '0 15px 50px -12px rgba(139, 92, 246, 0.35)' }}
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  {/* Animated gradient border effect */}
-                  <div className="absolute inset-px rounded-lg bg-gradient-to-br from-black/80 via-black/80 to-black/90 z-0"></div>
-                  <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_280deg,rgba(139,92,246,0.5)_300deg_340deg,transparent_360deg)] animate-[spin_4s_linear_infinite] blur-xl opacity-30"></div>
+                  {/* Base layer with strong blur */}
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-violet-500/50 overflow-hidden">
+                    {/* Light shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
+                  </div>
                   
-                  {/* Card content */}
-                  <div className="relative z-10 w-full">
-                    {/* Header with logo and status */}
-                    <div className="flex items-center justify-between w-full mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center p-1.5 shadow-lg shadow-violet-600/20">
-                          <svg className="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  {/* Content wrapper */}
+                  <div className="relative z-10 h-full w-full flex flex-col items-center justify-start text-center px-4 pt-5 pb-3">
+                    {/* Animated gradient border effect */}
+                    <div className="absolute inset-px rounded-lg bg-gradient-to-br from-black/80 via-black/80 to-black/90 z-0"></div>
+                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_280deg,rgba(139,92,246,0.5)_300deg_340deg,transparent_360deg)] animate-[spin_4s_linear_infinite] blur-xl opacity-30"></div>
+                    
+                    {/* Card content */}
+                    <div className="relative z-10 w-full">
+                      {/* Header with logo and status */}
+                      <div className="flex items-center justify-between w-full mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-md bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center p-1.5 shadow-lg shadow-violet-600/20">
+                            <svg className="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white/90 font-semibold text-sm leading-tight">GrowFi</div>
+                            <div className="text-[10px] text-indigo-300/70">Transaction Portal</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                          <span className="text-[10px] text-indigo-200/80">LIVE</span>
+                        </div>
+                      </div>
+                      
+                      {/* Animated chart/graph */}
+                      <div className="w-full h-[60px] mb-5 relative flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
+                              stroke="url(#chartGradient)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                            <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
+                              stroke="rgba(139, 92, 246, 0.3)" strokeWidth="6" strokeLinecap="round" filter="url(#chartGlow)" />
+                            
+                            {/* Pulse effect on high point */}
+                            <circle cx="120" cy="20" r="4" fill="#a855f7">
+                              <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
+                              <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+                            </circle>
+                            
+                            <defs>
+                              <linearGradient id="chartGradient" x1="0" y1="50" x2="180" y2="30" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#8b5cf6" stopOpacity="0.5" />
+                                <stop offset="0.5" stopColor="#a855f7" />
+                                <stop offset="1" stopColor="#d946ef" />
+                              </linearGradient>
+                              <filter id="chartGlow" x="-10" y="-10" width="200" height="80" filterUnits="userSpaceOnUse">
+                                <feGaussianBlur stdDeviation="4" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                              </filter>
+                            </defs>
                           </svg>
                         </div>
-                        <div className="text-left">
-                          <div className="text-white/90 font-semibold text-sm leading-tight">GrowFi</div>
-                          <div className="text-[10px] text-indigo-300/70">Transaction Portal</div>
+                      </div>
+                      
+                      {/* Transaction hash row */}
+                      <div className="flex items-center justify-between w-full bg-black/40 rounded-md px-3 py-2 mb-4 border border-violet-500/20">
+                        <div className="text-xs flex items-center gap-1.5">
+                          <svg className="w-3 h-3 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                          <span className="text-white/80 font-mono">0xbd72...fc68</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <button className="text-violet-400 hover:text-white">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <span className="text-[10px] text-indigo-200/80">LIVE</span>
+                      
+                      {/* Asset summary blocks */}
+                      <div className="flex w-full justify-between gap-3 mb-4">
+                        <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
+                          <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
+                            1.92<span className="text-xs text-violet-400 align-top mt-0.5">K</span>
+                          </span>
+                          <span className="text-[10px] text-indigo-300/70">TOTAL MVX</span>
+                        </div>
+                        <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
+                          <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
+                            426<span className="text-xs text-violet-400 align-top mt-0.5">+</span>
+                          </span>
+                          <span className="text-[10px] text-indigo-300/70">RECENT</span>
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Animated chart/graph */}
-                    <div className="w-full h-[60px] mb-5 relative flex items-center justify-center">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
-                            stroke="url(#chartGradient)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                          <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
-                            stroke="rgba(139, 92, 246, 0.3)" strokeWidth="6" strokeLinecap="round" filter="url(#chartGlow)" />
-                          
-                          {/* Pulse effect on high point */}
-                          <circle cx="120" cy="20" r="4" fill="#a855f7">
-                            <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
-                          </circle>
-                          
-                          <defs>
-                            <linearGradient id="chartGradient" x1="0" y1="50" x2="180" y2="30" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#8b5cf6" stopOpacity="0.5" />
-                              <stop offset="0.5" stopColor="#a855f7" />
-                              <stop offset="1" stopColor="#d946ef" />
-                            </linearGradient>
-                            <filter id="chartGlow" x="-10" y="-10" width="200" height="80" filterUnits="userSpaceOnUse">
-                              <feGaussianBlur stdDeviation="4" result="blur" />
-                              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
-                          </defs>
-                        </svg>
-                      </div>
-                    </div>
-                    
-                    {/* Transaction hash row */}
-                    <div className="flex items-center justify-between w-full bg-black/40 rounded-md px-3 py-2 mb-4 border border-violet-500/20">
-                      <div className="text-xs flex items-center gap-1.5">
-                        <svg className="w-3 h-3 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        <span className="text-white/80 font-mono">0xbd72...fc68</span>
-                      </div>
-                      <div className="flex gap-1">
-                        <button className="text-violet-400 hover:text-white">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Asset summary blocks */}
-                    <div className="flex w-full justify-between gap-3 mb-4">
-                      <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
-                        <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
-                          1.92<span className="text-xs text-violet-400 align-top mt-0.5">K</span>
-                        </span>
-                        <span className="text-[10px] text-indigo-300/70">TOTAL MVX</span>
-                      </div>
-                      <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
-                        <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
-                          426<span className="text-xs text-violet-400 align-top mt-0.5">+</span>
-                        </span>
-                        <span className="text-[10px] text-indigo-300/70">RECENT</span>
-                      </div>
-                    </div>
-                    
-                    {/* Status footer */}
-                    <div className="w-full flex justify-between items-center text-[10px] pt-1.5 border-t border-violet-500/20">
-                      <span className="text-indigo-300/70">SMARTCHAIN v3.5</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse"></span>
-                        <span className="text-violet-400">Processing</span>
-                      </div>
+                      
+                      {/* Simple separator */}
+                      <div className="w-full pt-1.5 border-t border-violet-500/20"></div>
                     </div>
                   </div>
                 </motion.div>
                 
                 {/* Right card - Analytics */}
                 <motion.div 
-                  className="w-40 md:w-48 h-52 md:h-56 bg-gradient-to-br from-black/80 to-indigo-900/20 border border-blue-500/30 rounded-lg shadow-2xl backdrop-blur-3xl flex flex-col items-start justify-center text-left px-5 py-5 opacity-90 scale-95 md:scale-100 -rotate-3 md:mb-8 z-10"
-                  style={{ boxShadow: '0 10px 40px -10px rgba(80, 102, 255, 0.3), inset 0 0 20px rgba(58, 130, 237, 0.2)' }}
+                  className="w-40 md:w-48 h-52 md:h-56 rounded-lg shadow-xl scale-95 md:scale-100 -rotate-3 md:mb-8 z-10 relative"
+                  style={{ boxShadow: '0 10px 40px -10px rgba(80, 102, 255, 0.35)' }}
                   initial={{ opacity: 0, x: 40 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  {/* Card header with icon and label */}
-                  <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
-                  <div className="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
-                  
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
+                  {/* Base layer with strong blur */}
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-blue-500/50 overflow-hidden">
+                    {/* Light shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
                   </div>
                   
-                  <h3 className="text-base text-white mb-3 font-medium tracking-wide">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Live</span> Analytics
-                  </h3>
-                  
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-3"></div>
-                  
-                  {/* Mini charts - horizontal bars */}
-                  <div className="space-y-2.5 w-full mb-2">
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] text-indigo-200/70">Engagement</span>
-                        <span className="text-[10px] text-blue-400 font-medium">+42%</span>
+                  {/* Content wrapper */}
+                  <div className="relative z-10 h-full w-full flex flex-col items-start justify-center text-left px-5 py-5">
+                    {/* Card header with icon and label */}
+                    <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
+                    <div className="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
+                    
+                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    
+                    <h3 className="text-base text-white mb-3 font-medium tracking-wide">
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Live</span> Analytics
+                    </h3>
+                    
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-3"></div>
+                    
+                    {/* Mini charts - horizontal bars */}
+                    <div className="space-y-2.5 w-full mb-2">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] text-indigo-200/70">Engagement</span>
+                          <span className="text-[10px] text-blue-400 font-medium">+42%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
+                          <div className="h-full w-[75%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                        </div>
                       </div>
-                      <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                        <div className="h-full w-[75%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] text-indigo-200/70">Conversion</span>
+                          <span className="text-[10px] text-blue-400 font-medium">12.8%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
+                          <div className="h-full w-[45%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] text-indigo-200/70">Revenue</span>
+                          <span className="text-[10px] text-blue-400 font-medium">$25.4K</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
+                          <div className="h-full w-[60%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                        </div>
                       </div>
                     </div>
                     
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] text-indigo-200/70">Conversion</span>
-                        <span className="text-[10px] text-blue-400 font-medium">12.8%</span>
+                    {/* Pulsing activity indicator */}
+                    <div className="flex items-center justify-between w-full pt-1 border-t border-blue-500/20 mt-1">
+                      <span className="text-[10px] text-indigo-200/70">Real-time data</span>
+                      <div className="flex items-center gap-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+                        <span className="text-[10px] text-blue-400">Active</span>
                       </div>
-                      <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                        <div className="h-full w-[45%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] text-indigo-200/70">Revenue</span>
-                        <span className="text-[10px] text-blue-400 font-medium">$25.4K</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                        <div className="h-full w-[60%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Pulsing activity indicator */}
-                  <div className="flex items-center justify-between w-full pt-1 border-t border-blue-500/20 mt-1">
-                    <span className="text-[10px] text-indigo-200/70">Real-time data</span>
-                    <div className="flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                      <span className="text-[10px] text-blue-400">Active</span>
                     </div>
                   </div>
                 </motion.div>
@@ -805,9 +837,9 @@ export default function Home() {
           </div>
           
         <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
-        
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+      
         {/* Decorative curved lines for Services section */}
         <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
           {/* Curved line at bottom */}
