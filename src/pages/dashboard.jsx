@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
-import ProtectedRoute from '@/components/ProtectedRoute';
 import { FadeIn, SlideIn } from '@/components/animations';
 import { useAuth } from './_app';
 
