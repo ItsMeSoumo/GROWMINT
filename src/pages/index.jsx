@@ -260,7 +260,7 @@ export default function Home() {
         </div>
         
           {/* Spline 3D Component */}
-          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
+          {/* <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             <div className="w-full h-full relative">
               <div style={{ 
                 position: 'absolute', 
@@ -281,7 +281,7 @@ export default function Home() {
                 />
         </div>
             </div>
-        </div>
+        </div> */}
         
         <div className="container mx-auto px-6 md:px-12 relative" style={{ zIndex: 10 }}>
           <div className="relative scroll-reveal scroll-reveal-fade flex flex-col md:flex-row items-center justify-between w-full gap-12">

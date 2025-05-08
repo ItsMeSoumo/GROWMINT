@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { FadeIn, SlideIn, ScaleIn } from '@/components/animations';
+import axios from 'axios';
 
 // Dynamically import the 3D scene to avoid SSR issues
 const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
@@ -14,6 +15,7 @@ export default function Contact() {
     email: '',
     subject: '',
     message: '',
+    loading: false
   });
   
   const [formStatus, setFormStatus] = useState({
@@ -29,26 +31,43 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormState({ ...formState, loading: true });
     
-    // Simulate form submission
-    setFormStatus({
-      submitted: true,
-      error: false,
-      message: 'Thanks for your message! We\'ll get back to you soon.'
-    });
-    
-    // In a real application, you would send this data to your API
-    console.log('Form submitted:', formState);
-    
-    // Reset form
-    setFormState({
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-    });
+    try {
+      // Send data to backend API
+      const response = await axios.post('/api/contact', formState);
+      console.log("API Response:", response.data);
+      
+      if (response.data.success) {
+        setFormStatus({ 
+          submitted: true, 
+          error: false, 
+          message: "Thanks for your message! We'll get back to you soon."
+        });
+        setFormState({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+          loading: false
+        });
+      } else {
+        setFormStatus({ 
+          submitted: true, 
+          error: true, 
+          message: response.data.message || "Failed to submit the form" 
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setFormStatus({ 
+        submitted: true, 
+        error: true, 
+        message: "Unable to connect to the server. Please try again later." 
+      });
+    }
   };
 
   return (
