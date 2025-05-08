@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Font Definitions */
 :root {
+  --font-display: 'Merriweather', serif;
+  --font-luxury: 'Merriweather', serif;
+  --font-body: 'Montserrat', sans-serif;
+  --font-modern: 'Roboto', sans-serif;
   --background: #0F0817;
   --foreground: #E9D5FF;
   --accent: #A855F7;
@@ -10,6 +15,200 @@
   --success: #86EFAC;
   --warning: #FDE047;
   --danger: #F87171;
+}
+
+/* Basic Styling */
+html, 
+body {
+  font-family: var(--font-body);
+  letter-spacing: 0.01em;
+  background-color: black;
+  color: white;
+}
+
+/* Typography Classes */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.font-luxury {
+  font-family: var(--font-luxury);
+  letter-spacing: 0.02em;
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-modern {
+  font-family: var(--font-modern);
+  letter-spacing: 0.03em;
+}
+
+.font-merriweather {
+  font-family: 'Merriweather', serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.growmint-glow {
+  color: #E9D5FF;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.7),
+               0 0 20px rgba(168, 85, 247, 0.5),
+               0 0 30px rgba(168, 85, 247, 0.3);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.7),
+                 0 0 20px rgba(168, 85, 247, 0.5),
+                 0 0 30px rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.9),
+                 0 0 25px rgba(168, 85, 247, 0.7),
+                 0 0 35px rgba(168, 85, 247, 0.5);
+  }
+}
+
+.growmint-glow-navbar {
+  color: #E9D5FF;
+  text-shadow: 0 0 4px rgba(168, 85, 247, 0.3),
+               0 0 8px rgba(168, 85, 247, 0.15);
+  animation: pulse-glow-navbar 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-navbar {
+  0%, 100% {
+    text-shadow: 0 0 4px rgba(168, 85, 247, 0.3),
+                 0 0 8px rgba(168, 85, 247, 0.15);
+  }
+  50% {
+    text-shadow: 0 0 6px rgba(168, 85, 247, 0.4),
+                 0 0 12px rgba(168, 85, 247, 0.2);
+  }
+}
+
+.navbar-glow {
+  box-shadow: 0 0 32px 8px rgba(168, 85, 247, 0.25),
+              0 0 64px 16px rgba(168, 85, 247, 0.15),
+              0 0 8px 2px rgba(168, 85, 247, 0.18),
+              0 2px 24px 0 rgba(168, 85, 247, 0.10),
+              inset 0 0 10px rgba(168, 85, 247, 0.08);
+}
+
+.premium-text {
+  font-family: var(--font-luxury);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0%, 100% {
+    background-position: -100% 0, 200% 0;
+  }
+  50% {
+    background-position: 200% 0, -100% 0;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes pulsate {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.03);
+  }
+}
+
+.pulsate {
+  animation: pulsate 4s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+/* Hardware acceleration for animations */
+.animate-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(10px);
+  }
+  50% {
+    transform: translateY(10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(5px) translateX(5px);
+  }
+}
+
+@keyframes float-delay {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(10px) translateX(-10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(10px);
+  }
+  75% {
+    transform: translateY(-5px) translateX(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-float-delay {
+  animation: float-delay 25s ease-in-out infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-dash {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: dash 4s linear forwards;
 }
 
 @theme inline {
@@ -30,7 +229,6 @@ html, body, #__next {
   min-height: 100vh;
   background: linear-gradient(135deg, #2E1065 0%, #0F0817 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
 }
 
@@ -97,6 +295,25 @@ body {
 .card:hover {
   border-color: rgba(168, 85, 247, 0.3);
   box-shadow: 0 8px 32px 0 rgba(168, 85, 247, 0.2);
+}
+
+.card-premium {
+  overflow: hidden;
+}
+.card-glass-glow-border {
+  pointer-events: none;
+  z-index: 10;
+  background: rgba(20, 10, 40, 0.55);
+  border-radius: 1rem;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 4px 32px 0 rgba(168,85,247,0.18),
+    0 0 0 2px rgba(168,85,247,0.12),
+    0 0 24px 4px rgba(168,85,247,0.10),
+    0 1.5px 8px 0 rgba(168,85,247,0.08) inset;
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-image: linear-gradient(120deg, #a855f7 10%, #818cf8 90%) 1;
 }
 
 /* Scroll Reveal Animations - Premium Version */

@@ -51,14 +51,14 @@ const Navbar = () => {
   return (
     <div className="flex justify-center w-full z-50 fixed top-0">
       <motion.nav 
-        className={`glass py-3 px-6 md:px-8 rounded-full mt-4 flex items-center transition-all duration-300 w-auto border border-white/10 backdrop-blur-md ${isScrolled ? 'shadow-lg' : ''}`}
+        className={`glass py-3 px-6 md:px-8 rounded-full mt-4 flex items-center transition-all duration-300 w-auto border border-white/10 backdrop-blur-md navbar-glow ${isScrolled ? 'shadow-lg' : ''}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="flex items-center justify-between w-full gap-8">
           <div 
-            className="text-2xl font-bold hover-scale tracking-tight text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] font-display" 
+            className="text-2xl font-bold hover-scale tracking-tight growmint-glow-navbar font-display" 
             onClick={handleLogoClick}
           >
             Growmint
