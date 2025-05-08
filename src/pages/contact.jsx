@@ -4,10 +4,7 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { FadeIn, SlideIn, ScaleIn } from '@/components/animations';
-import axios from 'axios';
-
-// Dynamically import the 3D scene to avoid SSR issues
-const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
+import axios from 'axios'
 
 export default function Contact() {
   const [formState, setFormState] = useState({
@@ -96,9 +93,7 @@ export default function Contact() {
           </div>
         </div>
         
-        <div className="absolute right-0 top-0 w-full md:w-1/2 h-full opacity-20 md:opacity-30">
-          <Scene3D height="100%" interactive={false} />
-        </div>
+        
       </section>
 
       {/* Contact Form Section */}

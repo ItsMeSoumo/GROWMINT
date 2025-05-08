@@ -7,7 +7,8 @@ import Layout from '@/components/Layout';
 import { FadeIn, SlideIn, ScaleIn, Stagger, StaggerItem } from '@/components/animations';
 import { scrollToSection } from '@/utils/scroll';
 import { initScrollReveal } from '@/utils/scrollReveal';
-import SpotlightCard from '@/components/SpotlightCard/SpotlightCard';
+import SpotlightCard from '@/components/Reactbits/SpotlightCard/SpotlightCard';
+import TiltedCard from '@/components/Reactbits/TiltedCard/TiltedCard';
 // Dynamically import the 3D scene to avoid SSR issues
 // Commented out for now
 // const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
@@ -267,7 +268,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section - Updated with futuristic design */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-black">
+      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-10 bg-black">
         {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           {/* Deep blue to purple gradient background */}
@@ -387,7 +388,7 @@ export default function Home() {
               {/* Glow behind cards */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[440px] h-[240px] bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(123,31,162,0.25)_0%,rgba(128,0,255,0.10)_60%,rgba(76,29,149,0.05)_90%,rgba(0,0,0,0)_100%)] blur-2xl opacity-80 z-0"></div>
               
-              <div className="absolute right-0 top-[60%] -translate-y-1/2 flex flex-row items-end gap-0 z-10 pr-1">
+              <div className="absolute right-0 top-[60%] -translate-y-1/2 flex flex-row items-end gap-1 z-10 pr-1">
                 {/* Analytics Card */}
                 <motion.div 
                   className="w-40 md:w-48 h-52 md:h-56 rounded-xl rotate-3 z-20 relative"
@@ -396,8 +397,18 @@ export default function Home() {
                 >
                   {/* Glass card with border glow */}
                   <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
+                    {/* Background image with overlay */}
+                    <div className="absolute inset-0 rounded-xl overflow-hidden">
+                      {/* <img 
+                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                        alt="Analytics Dashboard" 
+                        className="w-full h-full object-cover"
+                      /> */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 backdrop-blur-sm"></div>
+                    </div>
+                    
                     {/* Card content */}
-                    <div className="h-full w-full p-4 flex flex-col justify-between">
+                    <div className="h-full w-full p-4 flex flex-col justify-between relative z-10">
                       {/* Card header */}
                       <div className="flex justify-between items-center">
                         <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-1.5">
@@ -448,8 +459,18 @@ export default function Home() {
                 >
                   {/* Glass card with border glow */}
                   <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
+                    {/* Background image with overlay */}
+                    <div className="absolute inset-0 rounded-xl overflow-hidden">
+                      {/* <img 
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1026&q=80" 
+                        alt="Dashboard Statistics" 
+                        className="w-full h-full object-cover"
+                      /> */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 backdrop-blur-sm"></div>
+                    </div>
+                    
                     {/* Card content */}
-                    <div className="h-full w-full p-5 flex flex-col">
+                    <div className="h-full w-full p-5 flex flex-col relative z-10">
                       {/* Card header */}
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -526,8 +547,6 @@ export default function Home() {
                       
                       {/* Status bar */}
                       <div className="flex justify-between items-center text-xs mt-auto pt-3 border-t border-indigo-800/20">
-                        <span className="text-[#94A3B8]">Updated just now</span>
-                        <span className="text-indigo-400">View Report →</span>
                       </div>
                     </div>
                   </div>
@@ -544,8 +563,18 @@ export default function Home() {
                 >
                   {/* Glass card with border glow */}
                   <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
+                    {/* Background image with overlay */}
+                    <div className="absolute inset-0 rounded-xl overflow-hidden">
+                      {/* <img 
+                        src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                        alt="Network Statistics" 
+                        className="w-full h-full object-cover"
+                      /> */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 backdrop-blur-sm"></div>
+                    </div>
+                    
                     {/* Card content */}
-                    <div className="h-full w-full p-4 flex flex-col justify-between">
+                    <div className="h-full w-full p-4 flex flex-col justify-between relative z-10">
                       {/* Card header */}
                       <div className="flex justify-between items-center">
                         <div className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg p-1.5">
@@ -684,7 +713,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-32 relative">
+      <section id="about" className="py-20 relative">
         <div className="absolute inset-0 bg-black" />
         
         {/* Matching subtle purple glow background */}
@@ -740,7 +769,7 @@ export default function Home() {
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
-                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-100 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-4 scroll-reveal scroll-reveal-up reveal-delay-100 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
@@ -761,19 +790,19 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   {/* Top section with icon and label */}
                   <div className="text-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                       </svg>
                     </div>
                     <p className="text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Experience</p>
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
-                    <div className="text-7xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                    <div className="text-4xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       5<span className="text-purple-400">+</span>
                     </div>
-                    <p className="text-white text-xl font-light tracking-wide mb-1.5">Years</p>
+                    <p className="text-white text-lg font-light tracking-wide mb-1.5">Years</p>
                     <p className="text-white/40 text-sm font-light">Leading digital innovation</p>
                   </div>
                 </div>
@@ -788,7 +817,7 @@ export default function Home() {
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
-                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-200 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-4 scroll-reveal scroll-reveal-up reveal-delay-200 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
@@ -809,8 +838,8 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   {/* Top section with icon and label */}
                   <div className="text-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                       </svg>
                     </div>
@@ -818,10 +847,10 @@ export default function Home() {
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
-                    <div className="text-7xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                    <div className="text-4xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       100<span className="text-purple-400">+</span>
                     </div>
-                    <p className="text-white text-xl font-light tracking-wide mb-1.5">Completed</p>
+                    <p className="text-white text-lg font-light tracking-wide mb-1.5">Completed</p>
                     <p className="text-white/40 text-sm font-light">With precision & excellence</p>
                   </div>
                 </div>
@@ -836,7 +865,7 @@ export default function Home() {
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
-                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-300 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-4 scroll-reveal scroll-reveal-up reveal-delay-300 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
@@ -857,8 +886,8 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   {/* Top section with icon and label */}
                   <div className="text-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -866,10 +895,10 @@ export default function Home() {
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
-                    <div className="text-7xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                    <div className="text-4xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       50<span className="text-purple-400">+</span>
                     </div>
-                    <p className="text-white text-xl font-light tracking-wide mb-1.5">Happy</p>
+                    <p className="text-white text-lg font-light tracking-wide mb-1.5">Happy</p>
                     <p className="text-white/40 text-sm font-light">Across various industries</p>
                   </div>
                 </div>
@@ -884,7 +913,7 @@ export default function Home() {
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
-                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-400 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-4 scroll-reveal scroll-reveal-up reveal-delay-400 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                 whileHover={{ 
                   y: -5, 
                   boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
@@ -905,8 +934,8 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   {/* Top section with icon and label */}
                   <div className="text-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -914,10 +943,10 @@ export default function Home() {
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
-                    <div className="text-7xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                    <div className="text-4xl font-bold text-white font-display mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       24<span className="text-purple-400">/7</span>
                     </div>
-                    <p className="text-white text-xl font-light tracking-wide mb-1.5">Premium</p>
+                    <p className="text-white text-lg font-light tracking-wide mb-1.5">Premium</p>
                     <p className="text-white/40 text-sm font-light">Always at your service</p>
                   </div>
                 </div>
@@ -929,7 +958,7 @@ export default function Home() {
     </section>
 
     {/* Services Section */}
-    <section id="services" className="py-32 relative">
+    <section id="services" className="py-20 relative">
         <div className="absolute inset-0 bg-black" />
         
         {/* Matching subtle purple glow background */}
@@ -1158,7 +1187,7 @@ export default function Home() {
   </section>
 
   {/* Testimonials Section */}
-  <section id="testimonials" className="py-32 relative">
+  <section id="testimonials" className="py-20 relative">
     <div className="absolute inset-0 bg-black" />
     
     {/* Matching subtle purple glow background - same as services section */}
@@ -1212,13 +1241,13 @@ export default function Home() {
 </section>
 
 {/* CTA Section */}
-<section id="cta" className="py-32 relative">
+<section id="cta" className="py-20 relative">
     <div className="absolute inset-0 bg-black" />
     
     {/* Matching subtle purple glow background - same as services section */}
     <div className="absolute inset-0 pointer-events-none">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-  </div>
+    </div>
     
     <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
     <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
@@ -1226,33 +1255,36 @@ export default function Home() {
   
   <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
     <ScaleIn>
-        <div className="max-w-4xl mx-auto backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-16 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-          
-          {/* Small decorative elements */}
-          <div className="absolute w-2 h-2 rounded-full bg-accent/50 top-1/4 left-1/4 blur-sm"></div>
-          <div className="absolute w-3 h-3 rounded-full bg-accent/30 bottom-1/3 right-1/5 blur-sm"></div>
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-2/3 right-1/3 blur-sm"></div>
-        
-        <div className="relative">
-          <p className="premium-text text-accent mb-4 text-center tracking-widest">Ready to collaborate</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight text-center">Elevate your digital presence</h2>
-          <div className="absolute -inset-x-20 top-1/2 transform -translate-y-1/2 -z-10 h-32 blur-3xl opacity-20 bg-gradient-to-r from-accent to-violet-400 rounded-full" />
-        </div>
-        <p className="text-white/90 max-w-2xl mx-auto mb-10 text-lg leading-relaxed font-light tracking-wide text-center font-luxury">
-          Let's collaborate to create a premium website that captures your brand's essence and engages your audience in meaningful ways.
-        </p>
-        
-        <div className="text-center">
-            <Link href="/contact" className="bg-gradient-to-r from-accent to-purple-600 text-white px-10 py-4 rounded-full text-lg font-medium inline-flex items-center tracking-wide transition-all duration-150 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-1">
-            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Begin Your Journey
-          </Link>
-        </div>
+      <div className="flex justify-center">
+        <TiltedCard
+          imageSrc="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+          altText="Modern digital workspace"
+          captionText="Premium web development"
+          containerHeight="400px"
+          containerWidth="500px"
+          imageHeight="400px"
+          imageWidth="500px"
+          rotateAmplitude={10}
+          scaleOnHover={1.05}
+          showMobileWarning={false}
+          showTooltip={false}
+          displayOverlayContent={true}
+          overlayContent={
+            <div className="flex flex-col items-start justify-between h-full p-8">
+              <h3 className="text-white text-3xl font-bold mb-4">Transform Your Digital Presence</h3>
+              <p className="text-white/90 text-lg font-light leading-relaxed mb-6">
+                Elevate your brand with cutting-edge web solutions that captivate your audience and drive results. Our expert team brings your vision to life with precision design and innovative technology.
+              </p>
+              <div className="mt-auto">
+                <Link href="/contact" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-accent to-purple-500 shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-110">
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          }
+        />
       </div>
     </ScaleIn>
   </div>
