@@ -9,29 +9,11 @@ export default async function handler(req, res) {
   try {
     // Connect to MongoDB if not connected
     if (mongoose.connection.readyState !== 1) {
-      // Check for MongoDB URI
-      const mongoUri = process.env.MONGODB_URI;
-      if (!mongoUri) {
-        console.error('MONGODB_URI environment variable is not set');
-        return res.status(500).json({
-          success: false,
-          message: 'Server configuration error: Database connection string not provided'
-        });
-      }
-      
-      // Connect to MongoDB
-      try {
-        await mongoose.connect(mongoUri, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-      } catch (connError) {
-        console.error('MongoDB connection error:', connError);
-        return res.status(500).json({
-          success: false,
-          message: 'Failed to connect to database. Please try again later.'
-        });
-      }
+      // Make sure you have a MONGODB_URI in your .env file
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
     }
     
     const newContact = new contactModel(req.body);      

@@ -7,6 +7,7 @@ import Layout from '@/components/Layout';
 import { FadeIn, SlideIn, ScaleIn, Stagger, StaggerItem } from '@/components/animations';
 import { scrollToSection } from '@/utils/scroll';
 import { initScrollReveal } from '@/utils/scrollReveal';
+import SpotlightCard from '@/components/SpotlightCard/SpotlightCard';
 // Dynamically import the 3D scene to avoid SSR issues
 // Commented out for now
 // const Scene3D = dynamic(() => import('@/components/Scene3D'), { ssr: false });
@@ -17,9 +18,10 @@ const Testimonial = ({ quote, author, company, delay = 0 }) => (
   <motion.div
     className="relative overflow-hidden backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-8"
     initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -5 }}
-    transition={{ duration: 0.5, delay }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.4, delay }}
+    whileHover={{ y: -5, boxShadow: "0 10px 30px rgba(168, 85, 247, 0.2)" }}
   >
     <div className="absolute -top-6 -left-6 text-8xl opacity-10 text-accent font-serif">❝</div>
     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
@@ -47,52 +49,81 @@ export default function Home() {
   useEffect(() => {
     // Handle scroll progress and active section
     const handleScroll = () => {
-      const totalHeight = document.body.scrollHeight - window.innerHeight;
-      const currentScrollY = window.scrollY;
-      const progress = currentScrollY / totalHeight;
-      setScrollProgress(progress);
-      
-      // Determine active section based on scroll position
-      const sections = ['hero', 'about', 'services', 'testimonials', 'cta'];
-      const sectionElements = sections.map(id => document.getElementById(id));
-      const viewportHeight = window.innerHeight;
-      const viewportMiddle = currentScrollY + viewportHeight / 2;
-      for (let i = sectionElements.length - 1; i >= 0; i--) {
-        const section = sectionElements[i];
-        if (section) {
-          const sectionTop = section.offsetTop;
-          if (viewportMiddle >= sectionTop) {
-            setActiveSection(sections[i]);
+      // Use requestAnimationFrame for smoother performance
+      requestAnimationFrame(() => {
+        const totalHeight = document.body.scrollHeight - window.innerHeight;
+        const currentScrollY = window.scrollY;
+        const progress = currentScrollY / totalHeight;
+        setScrollProgress(progress);
+        
+        // Determine active section based on scroll position
+        const sections = ['hero', 'about', 'services', 'testimonials', 'cta'];
+        const sectionElements = sections.map(id => document.getElementById(id));
+        const viewportHeight = window.innerHeight;
+        const viewportMiddle = currentScrollY + viewportHeight / 2;
+        
+        // Find active section with improved efficiency
+        for (let i = sectionElements.length - 1; i >= 0; i--) {
+          const section = sectionElements[i];
+          if (section && viewportMiddle >= section.offsetTop) {
+            if (activeSection !== sections[i]) {
+              setActiveSection(sections[i]);
+            }
             break;
           }
         }
+      });
+    };
+    
+    // Throttle scroll events for better performance
+    let scrollTimeout;
+    const throttledScroll = () => {
+      if (!scrollTimeout) {
+        scrollTimeout = setTimeout(() => {
+          handleScroll();
+          scrollTimeout = null;
+        }, 10); // Small timeout to limit executions
       }
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    
     // Initialize scroll reveal animations (now one-sided and lightweight)
     const { cleanup } = initScrollReveal();
-    // Parallax and tilt logic (unchanged)
+    
+    // Parallax and tilt logic - more efficient with selectors
     const revealElements = document.querySelectorAll('.scroll-reveal');
-    revealElements.forEach(element => {
-      if (element.classList.contains('parallax-scroll')) {
-        const speed = element.getAttribute('data-speed') || 0.5;
-        element.style.setProperty('--parallax-factor', `${speed * 100}px`);
-      }
-      if (element.classList.contains('tilt-on-scroll')) {
-        const tiltX = element.getAttribute('data-tilt-x') || 10;
-        const tiltY = element.getAttribute('data-tilt-y') || 5;
-        element.style.setProperty('--tilt-factor-x', `${tiltX}deg`);
-        element.style.setProperty('--tilt-factor-y', `${tiltY}deg`);
-      }
-    });
+    if (revealElements.length > 0) {
+      revealElements.forEach(element => {
+        if (element.classList.contains('parallax-scroll')) {
+          const speed = element.getAttribute('data-speed') || 0.5;
+          element.style.setProperty('--parallax-factor', `${speed * 100}px`);
+        }
+        if (element.classList.contains('tilt-on-scroll')) {
+          const tiltX = element.getAttribute('data-tilt-x') || 10;
+          const tiltY = element.getAttribute('data-tilt-y') || 5;
+          element.style.setProperty('--tilt-factor-x', `${tiltX}deg`);
+          element.style.setProperty('--tilt-factor-y', `${tiltY}deg`);
+        }
+      });
+    }
+    
+    // Initial call to set everything up
+    handleScroll();
+    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', throttledScroll);
+      clearTimeout(scrollTimeout);
       cleanup();
     };
-  }, []);
+  }, [activeSection]); // Only re-run if activeSection changes
 
   return (
     <div className="relative min-h-screen w-full bg-black overflow-x-hidden">
+
+<SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(0, 229, 255, 0.2)">
+  <h1>Content goes here</h1>
+</SpotlightCard>
       {/* Global background gradients and glows */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {/* Main dark background */}
@@ -160,31 +191,37 @@ export default function Home() {
             text-transform: uppercase;
           }
           @keyframes shimmer {
-            0% {
-              background-position: -100% 0;
+            0%, 100% {
+              background-position: -100% 0, 200% 0;
             }
-            100% {
-              background-position: 200% 0;
+            50% {
+              background-position: 200% 0, -100% 0;
             }
           }
           .shimmer-effect {
             background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
             background-size: 200% 100%;
-            animation: shimmer 3s infinite;
+            animation: shimmer 4s ease-in-out infinite;
           }
           @keyframes pulsate {
-            0% {
+            0%, 100% {
               opacity: 0.4;
+              transform: scale(1);
             }
             50% {
               opacity: 0.7;
-            }
-            100% {
-              opacity: 0.4;
+              transform: scale(1.03);
             }
           }
           .pulsate {
-            animation: pulsate 3s ease-in-out infinite;
+            animation: pulsate 4s ease-in-out infinite;
+            will-change: opacity, transform;
+          }
+          /* Hardware acceleration for animations */
+          .animate-gpu {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
           }
         `}</style>
       </Head>
@@ -229,430 +266,478 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Hero Section */}
-        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-black">
+      {/* Hero Section - Updated with futuristic design */}
+      <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-black">
+        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
-            {/* Main dark background */}
-            <div className="absolute inset-0 bg-black" />
-            {/* Subtle purple-pink radial gradient */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#a259ff33] via-transparent to-transparent" />
-            {/* Existing overlays */}
-          <div className="absolute inset-0 opacity-30 bg-[url('/noise.png')] mix-blend-overlay" />
-            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
-            <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-black to-transparent" />
-          {/* Decorative curved lines */}
-          <div className="absolute inset-0 opacity-20 overflow-hidden">
-            {/* Large outer circle */}
-            <div className="absolute w-[150%] h-[150%] rounded-full border border-accent/20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute w-[120%] h-[120%] rounded-full border border-accent/15 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute w-[90%] h-[90%] rounded-full border border-accent/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            {/* Line segments - vertical and horizontal */}
-            <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent left-1/4"></div>
-            <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent right-1/4"></div>
-            <div className="absolute w-full h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent top-1/3"></div>
-            <div className="absolute w-full h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent bottom-1/3"></div>
-            {/* Accent decorative elements */}
-            <div className="absolute w-2 h-2 rounded-full bg-accent/50 top-1/4 left-1/4 blur-sm"></div>
-            <div className="absolute w-3 h-3 rounded-full bg-accent/30 bottom-1/3 right-1/5 blur-sm"></div>
-            <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-2/3 right-1/3 blur-sm"></div>
-            <div className="absolute w-2 h-2 rounded-full bg-accent/40 top-1/5 right-1/4 blur-sm"></div>
+          {/* Deep blue to purple gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#3B0764]" />
+          
+          {/* Animated orbital elements - purely CSS for better performance */}
+          <div className="absolute inset-0 opacity-40">
+            <div className="absolute w-[60vw] h-[60vw] border border-indigo-500/10 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+            <div className="absolute w-[80vw] h-[80vw] border border-violet-500/10 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping animate-gpu" style={{animationDuration: '10s'}}></div>
+            <div className="absolute w-[30vw] h-[30vw] border border-blue-400/20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{animationDuration: '4s'}}></div>
           </div>
+          
+          {/* Blurred abstract shapes */}
+          <div className="absolute top-1/4 right-1/4 w-[40vw] h-[40vh] bg-gradient-to-br from-blue-600/20 via-indigo-500/10 to-violet-800/20 rounded-full blur-[120px] animate-gpu animate-float" style={{animationDuration: '20s'}}></div>
+          <div className="absolute bottom-1/3 left-1/4 w-[30vw] h-[30vh] bg-gradient-to-tr from-violet-600/20 via-purple-500/10 to-fuchsia-500/20 rounded-full blur-[100px] animate-gpu animate-float-delay" style={{animationDuration: '25s'}}></div>
+          
+          {/* Grid overlay */}
+          <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
+          
+          {/* Gradient overlays for better text contrast */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-black to-transparent" />
         </div>
-        
-          {/* Spline 3D Component */}
-          {/* <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
-            <div className="w-full h-full relative">
-              <div style={{ 
-                position: 'absolute', 
-                width: '120%', 
-                height: '120%', 
-                top: '-10%', 
-                left: '-10%', 
-                overflow: 'hidden',
-                pointerEvents: 'none'
-              }}>
-                <iframe 
-                  src='https://my.spline.design/holoblobs-sVD6y8TJ2zIattfmcYCgfWH3/' 
-                  frameBorder='0' 
-                  width='100%' 
-                  height='100%'
-                  title="Spline 3D Scene"
-                  style={{ opacity: 0.8 }}
-                />
-        </div>
-            </div>
-        </div> */}
         
         <div className="container mx-auto px-6 md:px-12 relative" style={{ zIndex: 10 }}>
           <div className="relative scroll-reveal scroll-reveal-fade flex flex-col md:flex-row items-center justify-between w-full gap-12">
             {/* Left side - Text content */}
             <div className="flex-1 text-left">
-              <p className="premium-text text-white/80 mb-8 text-glow">Premium Web Development</p>
-              <div className="relative w-full flex justify-start items-center overflow-hidden">
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 font-luxury tracking-wider leading-tight relative">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-indigo-200 drop-shadow-[0_5px_15px_rgba(255,255,255,0.25)] tracking-[0.5em] font-display uppercase inline-block mr-4">GROW</span><span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-violet-600 to-indigo-400 drop-shadow-[0_5px_15px_rgba(79,70,229,0.5)] tracking-[0.5em] font-display uppercase inline-block">MINT</span>
-                  <span className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.25)_0%,transparent_70%)] blur-sm pulsate"></span>
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent opacity-40"></div>
-                </h1>
-              </div>
+              <motion.p 
+                className="mb-8 text-[#E2E8F0]/80 font-medium tracking-widest uppercase text-sm"
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.6}}
+              >
+                Future of Web Development
+              </motion.p>
               
-              <p className="text-xl md:text-2xl text-white/90 max-w-2xl mb-12 leading-relaxed font-modern font-light tracking-wide scroll-reveal scroll-reveal-up reveal-delay-100">
-                <motion.span
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  className="inline-block drop-shadow-[0_2px_10px_rgba(255,255,255,0.1)]"
-                >
-                  Pioneering the next generation of <span className="text-transparent bg-clip-text bg-gradient-to-br from-violet-400 via-indigo-400 to-blue-500 font-medium">digital experiences</span> with <span className="relative italic after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-transparent after:via-blue-400/50 after:to-transparent">premium design</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-400">cutting-edge</span> technology solutions.
-                </motion.span>
-              </p>
-              <div className="mt-10 mb-2"></div>
-              <div className="flex flex-col md:flex-row gap-6 justify-start items-center">
+              <motion.div 
+                className="relative w-full flex justify-start items-center overflow-hidden"
+                initial={{opacity: 0, y: 30}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.7, delay: 0.1}}
+              >
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 font-display tracking-tight leading-none">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E2E8F0] to-[#94A3B8] inline-block mr-4">GROW</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#818CF8] via-[#C084FC] to-[#E879F9] inline-block animate-pulse" style={{animationDuration: '4s'}}>MINT</span>
+                </h1>
+                {/* Glow effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/0 via-purple-500/20 to-pink-500/0 blur-xl opacity-30 animate-pulse" style={{animationDuration: '5s'}}></div>
+              </motion.div>
+              
+              <motion.p 
+                className="text-xl md:text-2xl text-[#E2E8F0]/90 max-w-2xl mb-12 leading-relaxed font-light tracking-wide"
+                initial={{opacity: 0, y: 30}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.7, delay: 0.2}}
+              >
+                Crafting <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#A78BFA] font-medium">digital experiences</span> that transcend expectations with <span className="relative italic after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-transparent after:via-indigo-400/50 after:to-transparent">precision design</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] to-[#F0ABFC]">cutting-edge</span> technology.
+              </motion.p>
+              
+              <motion.div 
+                className="flex flex-col md:flex-row gap-6 justify-start items-center mt-12"
+                initial={{opacity: 0, y: 30}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.7, delay: 0.3}}
+              >
                 <button 
                   onClick={() => scrollToSection('services')}
-                  className="btn-primary px-10 py-4 rounded-full hover-scale text-lg font-medium tracking-wide w-full md:w-auto flex items-center justify-center scroll-reveal scroll-reveal-left reveal-delay-200"
+                  className="relative px-8 py-4 rounded-full overflow-hidden group animate-gpu"
                 >
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  Explore Our Services
+                  {/* Button background with gradient border */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-80 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                  
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-md opacity-50 group-hover:opacity-70 transition-opacity duration-300 rounded-full"></div>
+                  
+                  {/* Inner content with better contrast */}
+                  <div className="relative flex items-center justify-center text-white font-medium z-10">
+                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Explore Our Services
+                  </div>
                 </button>
                 
-                <Link href="/contact" className="px-10 py-4 glass rounded-full hover-scale text-lg font-medium border border-accent/40 hover:border-accent/70 transition-colors tracking-wide flex items-center justify-center relative overflow-hidden group w-full md:w-auto scroll-reveal scroll-reveal-right reveal-delay-200">
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                  </svg>
-                  <span className="relative z-10">Start a Project</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-                  <div className="absolute -inset-x-2 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+                <Link 
+                  href="/contact" 
+                  className="relative px-8 py-4 rounded-full overflow-hidden group animate-gpu"
+                >
+                  {/* Button background with gradient border */}
+                  <div className="absolute inset-0 bg-transparent border border-indigo-500/50 group-hover:border-indigo-500/90 transition-all duration-300 rounded-full"></div>
+                  
+                  {/* Glass effect */}
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-full backdrop-blur-sm"></div>
+                  
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-indigo-500/0 group-hover:bg-indigo-500/20 blur-md transition-all duration-300 rounded-full"></div>
+                  
+                  {/* Inner content with better contrast */}
+                  <div className="relative flex items-center justify-center text-[#E2E8F0] z-10">
+                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                    </svg>
+                    <span>Start a Project</span>
+                  </div>
                 </Link>
-              </div>
+              </motion.div>
             </div>
 
-            {/* Right side - Improved AquaFi-style glassmorphism dashboard cards, no physical overlap */}
-            <div className="flex-1 relative min-h-[340px]">
-              {/* Glow/gradient background behind cards */}
+            {/* Right side - Glassmorphism cards */}
+            <motion.div 
+              className="flex-1 relative min-h-[340px]"
+              initial={{opacity: 0, scale: 0.95}}
+              animate={{opacity: 1, scale: 1}}
+              transition={{duration: 0.7, delay: 0.4}}
+            >
+              {/* Glow behind cards */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[440px] h-[240px] bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(123,31,162,0.25)_0%,rgba(128,0,255,0.10)_60%,rgba(76,29,149,0.05)_90%,rgba(0,0,0,0)_100%)] blur-2xl opacity-80 z-0"></div>
+              
               <div className="absolute right-0 top-[60%] -translate-y-1/2 flex flex-row items-end gap-0 z-10 pr-1">
-                {/* Left card - Affiliate Network */}
+                {/* Analytics Card */}
                 <motion.div 
-                  className="w-40 md:w-48 h-52 md:h-56 rounded-lg shadow-xl scale-95 md:scale-100 rotate-3 md:mb-8 z-10 relative"
-                  initial={{ opacity: 0, x: -40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
+                  className="w-40 md:w-48 h-52 md:h-56 rounded-xl rotate-3 z-20 relative"
+                  whileHover={{y: -10, rotateZ: 0}}
+                  transition={{type: "spring", stiffness: 300, damping: 20}}
                 >
-                  {/* Base layer with strong blur */}
-                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-indigo-500/50 overflow-hidden">
-                    {/* Light shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
-                  </div>
-                  
-                  {/* Content wrapper */}
-                  <div className="relative z-10 h-full w-full flex flex-col items-start justify-center px-5 py-5">
-                  {/* Glass shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-20 rounded-lg"></div>
-                  {/* Card header with icon and label */}
-                  <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent"></div>
-                  <div className="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-violet-500/20 to-transparent"></div>
-                  
-                  <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  </div>
-                  
-                  <h3 className="text-base text-white mb-3 font-medium tracking-wide">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-300">Partnr</span> Network
-                  </h3>
-                  
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent mb-3"></div>
-                  
-                  <div className="space-y-2 w-full">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-indigo-200/70">Global Reach</span>
-                      <span className="text-xs text-white font-medium">56 Countries</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-indigo-200/70">Partners</span>
-                      <span className="text-xs text-white font-medium">3.2K<span className="text-violet-400">+</span></span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-indigo-200/70">Yield</span>
-                      <span className="text-xs text-violet-400 font-medium">28.5%</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-3 w-full">
-                    <div className="text-xs text-indigo-200/70 mb-1">Network Growth</div>
-                    <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                      <div className="h-full w-[85%] bg-gradient-to-r from-violet-500 to-indigo-400 rounded-full"></div>
-                    </div>
-                  </div>
-                  </div>
-                </motion.div>
-                
-                {/* Center card - transaction dashboard */}
-                <motion.div 
-                  className="w-56 md:w-64 h-60 md:h-72 rounded-lg shadow-xl z-20 scale-105 md:scale-110 md:mb-0 relative"
-                  style={{ boxShadow: '0 15px 50px -12px rgba(139, 92, 246, 0.35)' }}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  {/* Base layer with strong blur */}
-                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-violet-500/50 overflow-hidden">
-                    {/* Light shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
-                  </div>
-                  
-                  {/* Content wrapper */}
-                  <div className="relative z-10 h-full w-full flex flex-col items-center justify-start text-center px-4 pt-5 pb-3">
-                    {/* Animated gradient border effect */}
-                    <div className="absolute inset-px rounded-lg bg-gradient-to-br from-black/80 via-black/80 to-black/90 z-0"></div>
-                    <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_280deg,rgba(139,92,246,0.5)_300deg_340deg,transparent_360deg)] animate-[spin_4s_linear_infinite] blur-xl opacity-30"></div>
-                    
+                  {/* Glass card with border glow */}
+                  <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
                     {/* Card content */}
-                    <div className="relative z-10 w-full">
-                      {/* Header with logo and status */}
-                      <div className="flex items-center justify-between w-full mb-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-md bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center p-1.5 shadow-lg shadow-violet-600/20">
-                            <svg className="w-full h-full text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <div className="text-left">
-                            <div className="text-white/90 font-semibold text-sm leading-tight">GrowFi</div>
-                            <div className="text-[10px] text-indigo-300/70">Transaction Portal</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                          <span className="text-[10px] text-indigo-200/80">LIVE</span>
-                        </div>
-                      </div>
-                      
-                      {/* Animated chart/graph */}
-                      <div className="w-full h-[60px] mb-5 relative flex items-center justify-center">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
-                              stroke="url(#chartGradient)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                            <path d="M0 55 C30 55 30 45 60 45 C90 45 90 20 120 20 C150 20 150 35 180 35" 
-                              stroke="rgba(139, 92, 246, 0.3)" strokeWidth="6" strokeLinecap="round" filter="url(#chartGlow)" />
-                            
-                            {/* Pulse effect on high point */}
-                            <circle cx="120" cy="20" r="4" fill="#a855f7">
-                              <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
-                              <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
-                            </circle>
-                            
-                            <defs>
-                              <linearGradient id="chartGradient" x1="0" y1="50" x2="180" y2="30" gradientUnits="userSpaceOnUse">
-                                <stop stopColor="#8b5cf6" stopOpacity="0.5" />
-                                <stop offset="0.5" stopColor="#a855f7" />
-                                <stop offset="1" stopColor="#d946ef" />
-                              </linearGradient>
-                              <filter id="chartGlow" x="-10" y="-10" width="200" height="80" filterUnits="userSpaceOnUse">
-                                <feGaussianBlur stdDeviation="4" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                              </filter>
-                            </defs>
+                    <div className="h-full w-full p-4 flex flex-col justify-between">
+                      {/* Card header */}
+                      <div className="flex justify-between items-center">
+                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-1.5">
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                           </svg>
                         </div>
+                        <span className="text-[10px] text-indigo-300/80">LIVE</span>
                       </div>
                       
-                      {/* Transaction hash row */}
-                      <div className="flex items-center justify-between w-full bg-black/40 rounded-md px-3 py-2 mb-4 border border-violet-500/20">
-                        <div className="text-xs flex items-center gap-1.5">
-                          <svg className="w-3 h-3 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                          </svg>
-                          <span className="text-white/80 font-mono">0xbd72...fc68</span>
+                      {/* Card title */}
+                      <h3 className="text-sm font-medium text-[#E2E8F0] mt-2">Analytics Dashboard</h3>
+                      
+                      {/* Metrics */}
+                      <div className="space-y-3 mt-auto">
+                        <div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-[#94A3B8]">Engagement</span>
+                            <span className="text-indigo-400">+32%</span>
+                          </div>
+                          <div className="w-full h-1 bg-[#1E293B] rounded-full mt-1">
+                            <div className="h-full w-[65%] bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+                          </div>
                         </div>
-                        <div className="flex gap-1">
-                          <button className="text-violet-400 hover:text-white">
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </button>
+                        
+                        <div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-[#94A3B8]">Conversion</span>
+                            <span className="text-indigo-400">18.2%</span>
+                          </div>
+                          <div className="w-full h-1 bg-[#1E293B] rounded-full mt-1">
+                            <div className="h-full w-[45%] bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+                          </div>
                         </div>
                       </div>
-                      
-                      {/* Asset summary blocks */}
-                      <div className="flex w-full justify-between gap-3 mb-4">
-                        <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
-                          <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
-                            1.92<span className="text-xs text-violet-400 align-top mt-0.5">K</span>
-                          </span>
-                          <span className="text-[10px] text-indigo-300/70">TOTAL MVX</span>
-                        </div>
-                        <div className="flex-1 bg-gradient-to-br from-violet-900/20 to-transparent rounded-md px-3 py-2 flex flex-col items-center border border-violet-500/20">
-                          <span className="text-lg font-bold text-white flex items-center justify-center gap-0.5">
-                            426<span className="text-xs text-violet-400 align-top mt-0.5">+</span>
-                          </span>
-                          <span className="text-[10px] text-indigo-300/70">RECENT</span>
-                        </div>
-                      </div>
-                      
-                      {/* Simple separator */}
-                      <div className="w-full pt-1.5 border-t border-violet-500/20"></div>
                     </div>
-                  </div>
-                </motion.div>
-                
-                {/* Right card - Analytics */}
-                <motion.div 
-                  className="w-40 md:w-48 h-52 md:h-56 rounded-lg shadow-xl scale-95 md:scale-100 -rotate-3 md:mb-8 z-10 relative"
-                  style={{ boxShadow: '0 10px 40px -10px rgba(80, 102, 255, 0.35)' }}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  {/* Base layer with strong blur */}
-                  <div className="absolute inset-0 bg-black/20 backdrop-blur-[25px] rounded-lg border border-blue-500/50 overflow-hidden">
-                    {/* Light shine effect */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>
                   </div>
                   
-                  {/* Content wrapper */}
-                  <div className="relative z-10 h-full w-full flex flex-col items-start justify-center text-left px-5 py-5">
-                    {/* Card header with icon and label */}
-                    <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
-                    <div className="absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
-                    
-                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-lg">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                    </div>
-                    
-                    <h3 className="text-base text-white mb-3 font-medium tracking-wide">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Live</span> Analytics
-                    </h3>
-                    
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-3"></div>
-                    
-                    {/* Mini charts - horizontal bars */}
-                    <div className="space-y-2.5 w-full mb-2">
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] text-indigo-200/70">Engagement</span>
-                          <span className="text-[10px] text-blue-400 font-medium">+42%</span>
+                  {/* Animated border gradient */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-[2px] opacity-70"></div>
+                </motion.div>
+                
+                {/* Main stats card */}
+                <motion.div 
+                  className="w-56 md:w-64 h-64 md:h-72 rounded-xl z-30 relative"
+                  whileHover={{y: -10}}
+                  transition={{type: "spring", stiffness: 300, damping: 20}}
+                >
+                  {/* Glass card with border glow */}
+                  <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
+                    {/* Card content */}
+                    <div className="h-full w-full p-5 flex flex-col">
+                      {/* Card header */}
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-md p-1.5">
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                          <span className="text-sm font-medium text-[#E2E8F0]">Growmint Stats</span>
                         </div>
-                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                          <div className="h-full w-[75%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] text-indigo-200/70">Conversion</span>
-                          <span className="text-[10px] text-blue-400 font-medium">12.8%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                          <div className="h-full w-[45%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                        <div className="flex items-center">
+                          <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse mr-1"></span>
+                          <span className="text-[10px] text-[#94A3B8]">LIVE</span>
                         </div>
                       </div>
                       
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[10px] text-indigo-200/70">Revenue</span>
-                          <span className="text-[10px] text-blue-400 font-medium">$25.4K</span>
+                      {/* Chart visualization */}
+                      <div className="mt-6 h-[110px] relative">
+                        {/* Line chart with SVG */}
+                        <svg className="w-full h-full" viewBox="0 0 240 110" fill="none">
+                          {/* Grid lines */}
+                          <line x1="0" y1="110" x2="240" y2="110" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+                          <line x1="0" y1="82.5" x2="240" y2="82.5" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+                          <line x1="0" y1="55" x2="240" y2="55" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+                          <line x1="0" y1="27.5" x2="240" y2="27.5" stroke="#334155" strokeWidth="1" strokeDasharray="4 4" />
+                          
+                          {/* Animated gradient path for better performance than animated JS */}
+                          <path 
+                            d="M0 80 C20 85 40 25 60 40 C80 55 100 85 120 70 C140 55 160 20 180 35 C200 50 220 65 240 55" 
+                            stroke="url(#lineGradient)" 
+                            strokeWidth="3" 
+                            fill="none" 
+                            strokeLinecap="round"
+                            className="animate-dash"
+                          />
+                          
+                          {/* Area fill under the line */}
+                          <path 
+                            d="M0 80 C20 85 40 25 60 40 C80 55 100 85 120 70 C140 55 160 20 180 35 C200 50 220 65 240 55 L240 110 L0 110 Z" 
+                            fill="url(#areaGradient)" 
+                            opacity="0.2"
+                          />
+                          
+                          {/* Gradient definitions */}
+                          <defs>
+                            <linearGradient id="lineGradient" x1="0" y1="0" x2="240" y2="0" gradientUnits="userSpaceOnUse">
+                              <stop offset="0%" stopColor="#818CF8" />
+                              <stop offset="50%" stopColor="#C084FC" />
+                              <stop offset="100%" stopColor="#F472B6" />
+                            </linearGradient>
+                            
+                            <linearGradient id="areaGradient" x1="120" y1="0" x2="120" y2="110" gradientUnits="userSpaceOnUse">
+                              <stop offset="0%" stopColor="#C084FC" stopOpacity="0.7" />
+                              <stop offset="100%" stopColor="#C084FC" stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        
+                        {/* Animate dot on the line */}
+                        <div className="absolute top-[35px] left-[180px] w-3 h-3 rounded-full bg-purple-500 shadow-lg shadow-purple-500/50 animate-pulse"></div>
+                      </div>
+                      
+                      {/* Stats grid */}
+                      <div className="grid grid-cols-2 gap-3 mt-6">
+                        <div className="bg-gradient-to-br from-indigo-900/30 to-purple-900/20 rounded-lg p-3 border border-indigo-700/20">
+                          <div className="text-lg font-semibold text-[#E2E8F0]">2.4k</div>
+                          <div className="text-xs text-[#94A3B8]">Active users</div>
                         </div>
-                        <div className="w-full h-1.5 bg-indigo-900/30 rounded-full overflow-hidden">
-                          <div className="h-full w-[60%] bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full"></div>
+                        <div className="bg-gradient-to-br from-indigo-900/30 to-purple-900/20 rounded-lg p-3 border border-indigo-700/20">
+                          <div className="text-lg font-semibold text-[#E2E8F0]">+28%</div>
+                          <div className="text-xs text-[#94A3B8]">Growth rate</div>
                         </div>
                       </div>
-                    </div>
-                    
-                    {/* Pulsing activity indicator */}
-                    <div className="flex items-center justify-between w-full pt-1 border-t border-blue-500/20 mt-1">
-                      <span className="text-[10px] text-indigo-200/70">Real-time data</span>
-                      <div className="flex items-center gap-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-                        <span className="text-[10px] text-blue-400">Active</span>
+                      
+                      {/* Status bar */}
+                      <div className="flex justify-between items-center text-xs mt-auto pt-3 border-t border-indigo-800/20">
+                        <span className="text-[#94A3B8]">Updated just now</span>
+                        <span className="text-indigo-400">View Report →</span>
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Animated border gradient */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 blur-[2px] opacity-70"></div>
+                </motion.div>
+                
+                {/* Network Card */}
+                <motion.div 
+                  className="w-40 md:w-48 h-52 md:h-56 rounded-xl -rotate-3 z-20 relative"
+                  whileHover={{y: -10, rotateZ: 0}}
+                  transition={{type: "spring", stiffness: 300, damping: 20}}
+                >
+                  {/* Glass card with border glow */}
+                  <div className="absolute inset-[1px] bg-gradient-to-br from-[#0F172A]/80 to-[#1E293B]/95 rounded-xl backdrop-blur-xl z-10">
+                    {/* Card content */}
+                    <div className="h-full w-full p-4 flex flex-col justify-between">
+                      {/* Card header */}
+                      <div className="flex justify-between items-center">
+                        <div className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg p-1.5">
+                          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        </div>
+                        <span className="text-[10px] text-indigo-300/80">NETWORK</span>
+                      </div>
+                      
+                      {/* Card title */}
+                      <h3 className="text-sm font-medium text-[#E2E8F0] mt-2">Partner Network</h3>
+                      
+                      {/* Network stats */}
+                      <div className="space-y-3 mt-auto">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-[#94A3B8]">Partners</span>
+                          <span className="text-pink-400">48</span>
+                        </div>
+                        
+                        <div className="flex justify-between text-xs">
+                          <span className="text-[#94A3B8]">Countries</span>
+                          <span className="text-pink-400">16</span>
+                        </div>
+                        
+                        <div className="flex justify-between text-xs">
+                          <span className="text-[#94A3B8]">Growth</span>
+                          <span className="text-pink-400">+42%</span>
+                        </div>
+                        
+                        <div className="w-full h-1 bg-[#1E293B] rounded-full mt-1">
+                          <div className="h-full w-[75%] bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Animated border gradient */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 blur-[2px] opacity-70"></div>
                 </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
         
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2" style={{ zIndex: 10 }}>
-          <motion.div
-            initial={{ y: 0, opacity: 0.5 }}
-            animate={{ y: [0, 10, 0], opacity: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 2 }}
+        {/* Scroll prompt */}
+        <motion.div 
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: [0, 10, 0]}}
+          transition={{
+            y: {
+              repeat: Infinity,
+              duration: 2,
+              repeatDelay: 0.5,
+              ease: "easeInOut"
+            },
+            opacity: {
+              delay: 1.5,
+              duration: 1
+            }
+          }}
+        >
+          <button 
+            onClick={() => scrollToSection('about')}
+            className="flex flex-col items-center focus:outline-none group"
+            aria-label="Scroll to About section"
           >
-            <button 
-              onClick={() => scrollToSection('about')}
-              className="flex flex-col items-center text-secondary group"
-            >
-              <span className="mb-2 text-lg font-light tracking-wider uppercase text-xs">Discover</span>
-              <svg className="w-8 h-8 group-hover:text-accent transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </button>
-          </motion.div>
-        </div>
+            <span className="mb-2 text-[#94A3B8] text-sm tracking-wider">Discover</span>
+            <div className="w-8 h-12 rounded-full border-2 border-[#94A3B8]/50 flex items-start justify-center p-1.5">
+              <motion.div 
+                className="w-1 h-2 bg-indigo-400 rounded-full" 
+                animate={{y: [0, 6, 0]}}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatDelay: 0.5
+                }}
+              />
+            </div>
+          </button>
+        </motion.div>
+        
+        {/* Add keyframes for floating animation */}
+        <style jsx global>{`
+          @keyframes dash {
+            to {
+              stroke-dashoffset: 0;
+            }
+          }
+          
+          @keyframes float {
+            0%, 100% {
+              transform: translateY(0) translateX(0);
+            }
+            25% {
+              transform: translateY(-10px) translateX(10px);
+            }
+            50% {
+              transform: translateY(10px) translateX(-10px);
+            }
+            75% {
+              transform: translateY(5px) translateX(5px);
+            }
+          }
+          
+          @keyframes float-delay {
+            0%, 100% {
+              transform: translateY(0) translateX(0);
+            }
+            25% {
+              transform: translateY(10px) translateX(-10px);
+            }
+            50% {
+              transform: translateY(-10px) translateX(10px);
+            }
+            75% {
+              transform: translateY(-5px) translateX(-5px);
+            }
+          }
+          
+          .animate-dash {
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: dash 4s linear forwards;
+          }
+          
+          .animate-float {
+            animation: float 20s ease-in-out infinite;
+          }
+          
+          .animate-float-delay {
+            animation: float-delay 25s ease-in-out infinite;
+          }
+        `}</style>
       </section>
 
       {/* About Section */}
-        <section id="about" className="py-32 relative">
-          <div className="absolute inset-0 bg-black" />
-          
-          {/* Matching subtle purple glow background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-          </div>
-          
-          <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+      <section id="about" className="py-32 relative">
+        <div className="absolute inset-0 bg-black" />
         
-        {/* Decorative curved lines for About section */}
-        <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
-          {/* Partial circles on edges */}
-          <div className="absolute w-[70%] h-[140%] rounded-full border border-accent/20 -top-1/4 -right-1/4"></div>
-          <div className="absolute w-[50%] h-[100%] rounded-full border border-accent/15 -bottom-1/4 -left-1/4"></div>
-          
-          {/* Diagonal line */}
-          <div className="absolute h-[200%] w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent top-0 left-1/3 rotate-[30deg] origin-top"></div>
-          
-          {/* Small decorative dots */}
-          <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-1/4 right-1/4 blur-sm"></div>
-          <div className="absolute w-2 h-2 rounded-full bg-accent/30 bottom-1/4 left-1/3 blur-sm"></div>
+        {/* Matching subtle purple glow background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
         </div>
         
-        <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-20 items-center relative">
-          <div className="relative scroll-reveal scroll-reveal-left">
-            <p className="premium-text text-accent mb-4 tracking-widest">Our Mission</p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-glow font-display tracking-tight leading-tight">Crafting Digital Experiences That Stand Out</h2>
-            <div className="h-1 w-32 bg-gradient-to-r from-accent to-purple-400 mb-8" />
-            <p className="text-white/90 mb-6 text-lg leading-relaxed font-light">
-              At Growmint, we blend technical expertise with innovative design thinking to deliver premium web solutions that exceed expectations. Our team of elite developers and designers create websites that not only look exceptional but perform flawlessly.
-            </p>
-            <p className="text-white/90 mb-10 text-lg leading-relaxed font-light">
-              We remain at the forefront of web technology, utilizing advanced tools like React, Three.js, and Framer Motion to create immersive, interactive experiences that captivate users and drive measurable results.
-            </p>
-            <Link href="/about" className="inline-flex items-center text-accent text-glow text-lg group tracking-wide font-luxury">
-              Our approach
-              <svg className="ml-2 group-hover:ml-4 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
-          </div>
+        <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+      
+      {/* Decorative curved lines for About section */}
+      <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
+        {/* Partial circles on edges */}
+        <div className="absolute w-[70%] h-[140%] rounded-full border border-accent/20 -top-1/4 -right-1/4"></div>
+        <div className="absolute w-[50%] h-[100%] rounded-full border border-accent/15 -bottom-1/4 -left-1/4"></div>
+        
+        {/* Diagonal line */}
+        <div className="absolute h-[200%] w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent top-0 left-1/3 rotate-[30deg] origin-top"></div>
+        
+        {/* Small decorative dots */}
+        <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-1/4 right-1/4 blur-sm"></div>
+        <div className="absolute w-2 h-2 rounded-full bg-accent/30 bottom-1/4 left-1/3 blur-sm"></div>
+      </div>
+      
+      <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-20 items-center relative">
+        <div className="relative scroll-reveal scroll-reveal-left">
+          <p className="premium-text text-accent mb-4 tracking-widest">Our Mission</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-glow font-display tracking-tight leading-tight">Crafting Digital Experiences That Stand Out</h2>
+          <div className="h-1 w-32 bg-gradient-to-r from-accent to-purple-400 mb-8" />
+          <p className="text-white/90 mb-6 text-lg leading-relaxed font-light">
+            At Growmint, we blend technical expertise with innovative design thinking to deliver premium web solutions that exceed expectations. Our team of elite developers and designers create websites that not only look exceptional but perform flawlessly.
+          </p>
+          <p className="text-white/90 mb-10 text-lg leading-relaxed font-light">
+            We remain at the forefront of web technology, utilizing advanced tools like React, Three.js, and Framer Motion to create immersive, interactive experiences that captivate users and drive measurable results.
+          </p>
+          <Link href="/about" className="inline-flex items-center text-accent text-glow text-lg group tracking-wide font-luxury">
+            Our approach
+            <svg className="ml-2 group-hover:ml-4 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-8 relative">
+          {/* Add background glow behind the entire cards section */}
+          <div className="absolute -inset-10 bg-gradient-to-tr from-accent/10 via-purple-500/5 to-transparent blur-3xl opacity-30 rounded-full" />
           
-          <div className="grid grid-cols-2 gap-8 relative">
-            {/* Add background glow behind the entire cards section */}
-            <div className="absolute -inset-10 bg-gradient-to-tr from-accent/10 via-purple-500/5 to-transparent blur-3xl opacity-30 rounded-full" />
-            
-            {/* Years Experience Card */}
+          {/* Years Experience Card */}
+          <SpotlightCard
+            className="custom-spotlight-card"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
                 className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-100 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
@@ -694,8 +779,13 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            
-            {/* Projects Completed Card */}
+          </SpotlightCard>
+          
+          {/* Projects Completed Card */}
+          <SpotlightCard
+            className="custom-spotlight-card"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
                 className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-200 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
@@ -737,8 +827,13 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            
-            {/* Happy Clients Card */}
+          </SpotlightCard>
+          
+          {/* Happy Clients Card */}
+          <SpotlightCard
+            className="custom-spotlight-card"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
                 className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-300 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
@@ -780,8 +875,13 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            
-            {/* Premium Support Card */}
+          </SpotlightCard>
+          
+          {/* Premium Support Card */}
+          <SpotlightCard
+            className="custom-spotlight-card"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
               <motion.div 
                 className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-8 scroll-reveal scroll-reveal-up reveal-delay-400 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
@@ -823,336 +923,340 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-          </div>
+          </SpotlightCard>
         </div>
-      </section>
+      </div>
+    </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-32 relative">
-          <div className="absolute inset-0 bg-black" />
-          
-          {/* Matching subtle purple glow background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-          </div>
-          
-        <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+    {/* Services Section */}
+    <section id="services" className="py-32 relative">
+        <div className="absolute inset-0 bg-black" />
+        
+        {/* Matching subtle purple glow background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
+        </div>
+        
+      <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+    
+    {/* Decorative curved lines for Services section */}
+    <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
+      {/* Curved line at bottom */}
+      <div className="absolute w-[120%] h-[60%] rounded-full border border-accent/15 top-[90%] left-1/2 -translate-x-1/2"></div>
       
-        {/* Decorative curved lines for Services section */}
-        <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
-          {/* Curved line at bottom */}
-          <div className="absolute w-[120%] h-[60%] rounded-full border border-accent/15 top-[90%] left-1/2 -translate-x-1/2"></div>
-          
-          {/* Vertical lines */}
-          <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/15 to-transparent left-[15%]"></div>
-          <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/15 to-transparent right-[15%]"></div>
+      {/* Vertical lines */}
+      <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/15 to-transparent left-[15%]"></div>
+      <div className="absolute h-full w-px bg-gradient-to-b from-transparent via-accent/15 to-transparent right-[15%]"></div>
+      
+      {/* Small decorative elements */}
+      <div className="absolute w-3 h-3 rounded-full bg-accent/20 top-[15%] right-[25%] blur-sm"></div>
+      <div className="absolute w-4 h-4 rounded-full bg-accent/10 bottom-[30%] left-[20%] blur-sm"></div>
+      <div className="absolute w-2 h-2 rounded-full bg-accent/30 top-[40%] left-[10%] blur-sm"></div>
+    </div>
+    
+    <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="text-center mb-20 scroll-reveal scroll-reveal-fade">
+        <p className="premium-text text-accent mb-4 tracking-widest">What we offer</p>
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight">Our Premium Services</h2>
+        <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mx-auto mb-10" />
+        <p className="text-white/90 max-w-3xl mx-auto text-lg font-light tracking-wide">
+          We provide comprehensive web development services tailored to elevate your brand in the digital landscape.
+        </p>
+      </div>
+      
+      {/* Bentobox grid layout */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6 relative">
+          {/* Subtle glow background */}
+          <div className="absolute -inset-10 pointer-events-none bg-gradient-to-br from-accent/10 via-transparent to-transparent blur-3xl opacity-20"></div>
+        
+        {/* Featured Service - Web Development - Spans 2 columns */}
+        <div className="md:col-span-2 lg:col-span-2 md:row-span-2 relative group scroll-reveal scroll-reveal-up">
+          <motion.div 
+            className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-8 h-full"
+            whileInView={{ y: [20, 0], opacity: [0, 1] }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ y: -5, scale: 1.01 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+            
+            <div className="flex items-start gap-6 mb-6 relative z-10">
+              <div className="text-accent text-6xl relative p-4 rounded-2xl bg-background/20">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-3xl font-bold mb-4 neon-text font-display tracking-tight">Web Development</h3>
+                <div className="w-16 h-1 bg-gradient-to-r from-accent to-purple-400 rounded-full mb-4"></div>
+              </div>
+            </div>
+            <p className="text-secondary text-lg font-light leading-relaxed mb-8">
+              Custom websites crafted with cutting-edge technologies, focused on performance, responsiveness, and exceptional user experience. 
+              Our development process ensures your site not only looks stunning but also delivers optimal functionality.
+            </p>
+            <div className="mt-auto flex flex-wrap gap-3">
+              <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">React</span>
+              <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">Next.js</span>
+              <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">Vue</span>
+              <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">TailwindCSS</span>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* UI/UX Design */}
+        <div className="relative group scroll-reveal scroll-reveal-right reveal-delay-100">
+          <motion.div 
+              className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
+            whileHover={{ y: -5 }}
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+              
+            <div className="text-accent mb-6 text-5xl relative">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+              </svg>
+            </div>
+            <div className="relative">
+              <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">UI/UX Design</h3>
+            </div>
+            <p className="text-secondary text-sm font-light leading-relaxed">
+              Intuitive, beautiful interfaces designed to engage users and provide seamless experiences across all devices.
+            </p>
+          </motion.div>
+        </div>
+        
+        {/* 3D Web Experiences */}
+        <div className="relative group scroll-reveal scroll-reveal-right reveal-delay-200">
+          <motion.div 
+              className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
+            whileHover={{ y: -5 }}
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+              
+            <div className="text-accent mb-6 text-5xl relative">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+              </svg>
+            </div>
+            <div className="relative">
+              <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">3D Web Experiences</h3>
+            </div>
+            <p className="text-secondary text-sm font-light leading-relaxed">
+              Immersive 3D elements and animations that make your website stand out and create memorable user experiences.
+            </p>
+          </motion.div>
+        </div>
+        
+        {/* E-commerce Solutions */}
+        <div className="lg:col-span-2 relative group scroll-reveal scroll-reveal-left reveal-delay-100">
+          <motion.div 
+              className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
+            whileHover={{ y: -5 }}
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+              
+            <div className="flex items-start gap-4">
+              <div className="text-accent mb-6 text-5xl relative">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="relative">
+                  <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">E-commerce Solutions</h3>
+                </div>
+                <p className="text-secondary text-sm font-light leading-relaxed">
+                  Secure, scalable online stores with seamless payment integration, inventory management, and detailed customer analytics.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Performance Optimization */}
+        <div className="md:col-span-1 relative group scroll-reveal scroll-reveal-left reveal-delay-200">
+          <motion.div 
+              className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
+            whileHover={{ y: -5 }}
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+              
+            <div className="flex items-start gap-4">
+              <div className="text-accent mb-6 text-5xl relative">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="relative">
+                  <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">Performance Optimization</h3>
+                </div>
+                <p className="text-secondary text-sm font-light leading-relaxed">
+                  Speed up your existing website with expert optimization techniques for better user experience and SEO rankings.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Web Applications */}
+        <div className="md:col-span-2 relative group scroll-reveal scroll-reveal-up reveal-delay-300">
+          <motion.div 
+              className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
+            whileHover={{ y: -5 }}
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+              
+            <div className="flex items-start gap-4">
+              <div className="text-accent mb-6 text-5xl relative">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <div className="relative">
+                  <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">Web Applications</h3>
+                </div>
+                <p className="text-secondary text-sm font-light leading-relaxed">
+                  Custom web applications that solve complex business problems and optimize workflows with elegant user interfaces.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      
+      <div className="text-center mt-16 scroll-reveal scroll-reveal-fade reveal-delay-400">
+        <Link href="/services" className="inline-flex items-center text-accent hover-scale text-lg group tracking-wide">
+          <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+          </svg>
+          View all our services
+          <svg className="ml-2 group-hover:ml-4 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+      </div>
+    </div>
+  </section>
+
+  {/* Testimonials Section */}
+  <section id="testimonials" className="py-32 relative">
+    <div className="absolute inset-0 bg-black" />
+    
+    {/* Matching subtle purple glow background - same as services section */}
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
+    </div>
+    
+    <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
+    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
+    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+    
+  <div className="container mx-auto px-6 md:px-12 relative z-10">
+    <div className="text-center mb-20">
+      <FadeIn>
+        <p className="premium-text text-accent mb-4 tracking-widest">Testimonials</p>
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight">Client Success Stories</h2>
+        <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mx-auto mb-10" />
+        <p className="text-white/90 max-w-3xl mx-auto text-lg font-light tracking-wide">
+          The experiences of our clients speak volumes about our dedication to excellence and results.
+        </p>
+      </FadeIn>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
+      {/* Add background glow behind the entire testimonial cards */}
+      <div className="absolute -inset-10 bg-gradient-to-tl from-accent/10 via-purple-500/5 to-transparent blur-3xl opacity-30 rounded-full" />
+      <div className="absolute top-1/3 right-1/4 w-1/2 h-1/2 bg-gradient-to-bl from-accent/5 to-purple-500/10 blur-3xl opacity-20 rounded-full" />
+      
+      <Testimonial 
+        quote="Growmint transformed our outdated website into a modern, responsive platform that our customers love. The 3D elements they added truly set our brand apart in a competitive market."
+        author="Sarah Johnson"
+        company="TechStart Inc."
+        delay={0.1}
+      />
+      
+      <Testimonial 
+        quote="Working with the Growmint team was exceptional from concept to launch. They understood our vision immediately and delivered a website that exceeded all our expectations."
+        author="Michael Chen"
+        company="Innovate Solutions"
+        delay={0.2}
+      />
+      
+      <Testimonial 
+        quote="The e-commerce site Growmint built for us increased our online sales by 200% in the first quarter. Their attention to detail and focus on user experience made all the difference."
+        author="Emily Rodriguez"
+        company="Artisan Crafts Co."
+        delay={0.3}
+      />
+    </div>
+  </div>
+</section>
+
+{/* CTA Section */}
+<section id="cta" className="py-32 relative">
+    <div className="absolute inset-0 bg-black" />
+    
+    {/* Matching subtle purple glow background - same as services section */}
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
+  </div>
+    
+    <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
+    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
+    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+  
+  <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
+    <ScaleIn>
+        <div className="max-w-4xl mx-auto backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-16 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
           
           {/* Small decorative elements */}
-          <div className="absolute w-3 h-3 rounded-full bg-accent/20 top-[15%] right-[25%] blur-sm"></div>
-          <div className="absolute w-4 h-4 rounded-full bg-accent/10 bottom-[30%] left-[20%] blur-sm"></div>
-          <div className="absolute w-2 h-2 rounded-full bg-accent/30 top-[40%] left-[10%] blur-sm"></div>
-        </div>
+          <div className="absolute w-2 h-2 rounded-full bg-accent/50 top-1/4 left-1/4 blur-sm"></div>
+          <div className="absolute w-3 h-3 rounded-full bg-accent/30 bottom-1/3 right-1/5 blur-sm"></div>
+          <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-2/3 right-1/3 blur-sm"></div>
         
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="text-center mb-20 scroll-reveal scroll-reveal-fade">
-            <p className="premium-text text-accent mb-4 tracking-widest">What we offer</p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight">Our Premium Services</h2>
-            <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mx-auto mb-10" />
-            <p className="text-white/90 max-w-3xl mx-auto text-lg font-light tracking-wide">
-              We provide comprehensive web development services tailored to elevate your brand in the digital landscape.
-            </p>
-          </div>
-          
-          {/* Bentobox grid layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6 relative">
-              {/* Subtle glow background */}
-              <div className="absolute -inset-10 pointer-events-none bg-gradient-to-br from-accent/10 via-transparent to-transparent blur-3xl opacity-20"></div>
-            
-            {/* Featured Service - Web Development - Spans 2 columns */}
-            <div className="md:col-span-2 lg:col-span-2 md:row-span-2 relative group scroll-reveal scroll-reveal-up">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-8 h-full"
-                whileHover={{ y: -5, scale: 1.01 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="flex items-start gap-6 mb-6 relative z-10">
-                  <div className="text-accent text-6xl relative p-4 rounded-2xl bg-background/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-3xl font-bold mb-4 neon-text font-display tracking-tight">Web Development</h3>
-                    <div className="w-16 h-1 bg-gradient-to-r from-accent to-purple-400 rounded-full mb-4"></div>
-                  </div>
-                </div>
-                <p className="text-secondary text-lg font-light leading-relaxed mb-8">
-                  Custom websites crafted with cutting-edge technologies, focused on performance, responsiveness, and exceptional user experience. 
-                  Our development process ensures your site not only looks stunning but also delivers optimal functionality.
-                </p>
-                <div className="mt-auto flex flex-wrap gap-3">
-                  <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">React</span>
-                  <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">Next.js</span>
-                  <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">Vue</span>
-                  <span className="px-3 py-1 text-xs bg-accent/10 text-accent rounded-full">TailwindCSS</span>
-                </div>
-              </motion.div>
-            </div>
-            
-            {/* UI/UX Design */}
-            <div className="relative group scroll-reveal scroll-reveal-right reveal-delay-100">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
-                whileHover={{ y: -5 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="text-accent mb-6 text-5xl relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                  </svg>
-                </div>
-                <div className="relative">
-                  <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">UI/UX Design</h3>
-                </div>
-                <p className="text-secondary text-sm font-light leading-relaxed">
-                  Intuitive, beautiful interfaces designed to engage users and provide seamless experiences across all devices.
-                </p>
-              </motion.div>
-            </div>
-            
-            {/* 3D Web Experiences */}
-            <div className="relative group scroll-reveal scroll-reveal-right reveal-delay-200">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
-                whileHover={{ y: -5 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="text-accent mb-6 text-5xl relative">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                  </svg>
-                </div>
-                <div className="relative">
-                  <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">3D Web Experiences</h3>
-                </div>
-                <p className="text-secondary text-sm font-light leading-relaxed">
-                  Immersive 3D elements and animations that make your website stand out and create memorable user experiences.
-                </p>
-              </motion.div>
-            </div>
-            
-            {/* E-commerce Solutions */}
-            <div className="lg:col-span-2 relative group scroll-reveal scroll-reveal-left reveal-delay-100">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
-                whileHover={{ y: -5 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="flex items-start gap-4">
-                  <div className="text-accent mb-6 text-5xl relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <div className="relative">
-                      <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">E-commerce Solutions</h3>
-                    </div>
-                    <p className="text-secondary text-sm font-light leading-relaxed">
-                      Secure, scalable online stores with seamless payment integration, inventory management, and detailed customer analytics.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-            
-            {/* Performance Optimization */}
-            <div className="md:col-span-1 relative group scroll-reveal scroll-reveal-left reveal-delay-200">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
-                whileHover={{ y: -5 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="flex items-start gap-4">
-                  <div className="text-accent mb-6 text-5xl relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <div className="relative">
-                      <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">Performance Optimization</h3>
-                    </div>
-                    <p className="text-secondary text-sm font-light leading-relaxed">
-                      Speed up your existing website with expert optimization techniques for better user experience and SEO rankings.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-            
-            {/* Web Applications */}
-            <div className="md:col-span-2 relative group scroll-reveal scroll-reveal-up reveal-delay-300">
-              <motion.div 
-                  className="relative overflow-hidden group backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-6 h-full"
-                whileHover={{ y: -5 }}
-              >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                  
-                <div className="flex items-start gap-4">
-                  <div className="text-accent mb-6 text-5xl relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <div className="relative">
-                      <h3 className="text-xl font-bold mb-3 neon-text font-display tracking-tight">Web Applications</h3>
-                    </div>
-                    <p className="text-secondary text-sm font-light leading-relaxed">
-                      Custom web applications that solve complex business problems and optimize workflows with elegant user interfaces.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-          
-          <div className="text-center mt-16 scroll-reveal scroll-reveal-fade reveal-delay-400">
-            <Link href="/services" className="inline-flex items-center text-accent hover-scale text-lg group tracking-wide">
-              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              View all our services
-              <svg className="ml-2 group-hover:ml-4 transition-all duration-300" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
-          </div>
+        <div className="relative">
+          <p className="premium-text text-accent mb-4 text-center tracking-widest">Ready to collaborate</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight text-center">Elevate your digital presence</h2>
+          <div className="absolute -inset-x-20 top-1/2 transform -translate-y-1/2 -z-10 h-32 blur-3xl opacity-20 bg-gradient-to-r from-accent to-violet-400 rounded-full" />
         </div>
-      </section>
-
-      {/* Testimonials Section */}
-        <section id="testimonials" className="py-32 relative">
-          <div className="absolute inset-0 bg-black" />
-          
-          {/* Matching subtle purple glow background - same as services section */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-          </div>
-          
-          <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
-          
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="text-center mb-20">
-            <FadeIn>
-              <p className="premium-text text-accent mb-4 tracking-widest">Testimonials</p>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight">Client Success Stories</h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mx-auto mb-10" />
-              <p className="text-white/90 max-w-3xl mx-auto text-lg font-light tracking-wide">
-                The experiences of our clients speak volumes about our dedication to excellence and results.
-              </p>
-            </FadeIn>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative">
-            {/* Add background glow behind the entire testimonial cards */}
-            <div className="absolute -inset-10 bg-gradient-to-tl from-accent/10 via-purple-500/5 to-transparent blur-3xl opacity-30 rounded-full" />
-            <div className="absolute top-1/3 right-1/4 w-1/2 h-1/2 bg-gradient-to-bl from-accent/5 to-purple-500/10 blur-3xl opacity-20 rounded-full" />
-            
-            <Testimonial 
-              quote="Growmint transformed our outdated website into a modern, responsive platform that our customers love. The 3D elements they added truly set our brand apart in a competitive market."
-              author="Sarah Johnson"
-              company="TechStart Inc."
-              delay={0.1}
-            />
-            
-            <Testimonial 
-              quote="Working with the Growmint team was exceptional from concept to launch. They understood our vision immediately and delivered a website that exceeded all our expectations."
-              author="Michael Chen"
-              company="Innovate Solutions"
-              delay={0.2}
-            />
-            
-            <Testimonial 
-              quote="The e-commerce site Growmint built for us increased our online sales by 200% in the first quarter. Their attention to detail and focus on user experience made all the difference."
-              author="Emily Rodriguez"
-              company="Artisan Crafts Co."
-              delay={0.3}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="cta" className="py-32 relative">
-          <div className="absolute inset-0 bg-black" />
-          
-          {/* Matching subtle purple glow background - same as services section */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-        </div>
-          
-          <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-          <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black to-transparent" />
+        <p className="text-white/90 max-w-2xl mx-auto mb-10 text-lg leading-relaxed font-light tracking-wide text-center font-luxury">
+          Let's collaborate to create a premium website that captures your brand's essence and engages your audience in meaningful ways.
+        </p>
         
-        <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
-          <ScaleIn>
-              <div className="max-w-4xl mx-auto backdrop-blur-md bg-black/20 border border-purple-500/20 shadow-lg hover:shadow-purple-500/30 transition-all duration-500 rounded-3xl p-16 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
-                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-                
-                {/* Small decorative elements */}
-                <div className="absolute w-2 h-2 rounded-full bg-accent/50 top-1/4 left-1/4 blur-sm"></div>
-                <div className="absolute w-3 h-3 rounded-full bg-accent/30 bottom-1/3 right-1/5 blur-sm"></div>
-                <div className="absolute w-1.5 h-1.5 rounded-full bg-accent/40 top-2/3 right-1/3 blur-sm"></div>
-              
-              <div className="relative">
-                <p className="premium-text text-accent mb-4 text-center tracking-widest">Ready to collaborate</p>
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow font-display tracking-tight leading-tight text-center">Elevate your digital presence</h2>
-                <div className="absolute -inset-x-20 top-1/2 transform -translate-y-1/2 -z-10 h-32 blur-3xl opacity-20 bg-gradient-to-r from-accent to-violet-400 rounded-full" />
-              </div>
-              <p className="text-white/90 max-w-2xl mx-auto mb-10 text-lg leading-relaxed font-light tracking-wide text-center font-luxury">
-                Let's collaborate to create a premium website that captures your brand's essence and engages your audience in meaningful ways.
-              </p>
-              
-              <div className="text-center">
-                  <Link href="/contact" className="bg-gradient-to-r from-accent to-purple-600 text-white px-10 py-4 rounded-full text-lg font-medium inline-flex items-center tracking-wide transition-all duration-150 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-1">
-                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Begin Your Journey
-                </Link>
-              </div>
-            </div>
-          </ScaleIn>
+        <div className="text-center">
+            <Link href="/contact" className="bg-gradient-to-r from-accent to-purple-600 text-white px-10 py-4 rounded-full text-lg font-medium inline-flex items-center tracking-wide transition-all duration-150 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-1">
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Begin Your Journey
+          </Link>
         </div>
-      </section>
+      </div>
+    </ScaleIn>
+  </div>
+</section>
     </Layout>
     </div>
   );
