@@ -11,6 +11,7 @@ const Navbar = () => {
   const [clickCount, setClickCount] = useState(0);
   const [lastClickTime, setLastClickTime] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
   const { user, logout } = useAuth();
   
@@ -64,6 +65,7 @@ const Navbar = () => {
             Growmint
           </div>
           
+          {/* Desktop menu */}
           <ul className="hidden md:flex gap-8 mx-auto">
             <li>
               <Link href="/" className="font-medium text-white/90 hover:text-white tracking-wide transition-all duration-150 relative group">
@@ -128,15 +130,79 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center">
-              <button className="p-2 md:hidden">
-                <div className="w-6 h-0.5 bg-foreground mb-1.5"></div>
-                <div className="w-6 h-0.5 bg-foreground mb-1.5"></div>
-                <div className="w-6 h-0.5 bg-foreground"></div>
+              {/* Hamburger button for mobile */}
+              <button
+                className="p-2 md:hidden focus:outline-none"
+                aria-label="Open menu"
+                aria-expanded={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen((open) => !open)}
+              >
+                <div className={`w-6 h-0.5 bg-foreground mb-1.5 transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
+                <div className={`w-6 h-0.5 bg-foreground mb-1.5 transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+                <div className={`w-6 h-0.5 bg-foreground transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
               </button>
             </div>
           )}
         </div>
       </motion.nav>
+
+      {/* Mobile menu overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-start pt-24 md:hidden animate-fade-in">
+          <nav className="flex flex-col gap-8 w-full max-w-xs mx-auto">
+            <Link href="/" legacyBehavior>
+              <a
+                className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </a>
+            </Link>
+            <Link href="/about" legacyBehavior>
+              <a
+                className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </a>
+            </Link>
+            <Link href="/services" legacyBehavior>
+              <a
+                className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Services
+              </a>
+            </Link>
+            <Link href="/contact" legacyBehavior>
+              <a
+                className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </a>
+            </Link>
+            {user ? (
+              <>
+                <Link href="/dashboard" legacyBehavior>
+                  <a
+                    className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </a>
+                </Link>
+                <button
+                  className="block w-full text-left text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                  onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }}
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : null}
+          </nav>
+        </div>
+      )}
     </div>
   );
 };
