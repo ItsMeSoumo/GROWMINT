@@ -11,10 +11,7 @@ export default async function handler(req, res) {
     console.log('[DEBUG] Mongoose readyState before connect:', mongoose.connection.readyState);
     if (mongoose.connection.readyState !== 1) {
       // Make sure you have a MONGODB_URI in your .env file
-      await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.MONGODB_URI);
       console.log('[DEBUG] Mongoose connected! readyState:', mongoose.connection.readyState);
     } else {
       console.log('[DEBUG] Mongoose already connected. readyState:', mongoose.connection.readyState);
@@ -27,23 +24,20 @@ export default async function handler(req, res) {
       res.status(201).json({
         message: 'Message sent successfully', 
         success: true, 
-        data: newContact,
-        mongoConnected: mongoose.connection.readyState === 1
+        data: newContact
       });
     } catch (saveError) {
       console.error('Error saving to database:', saveError);
       res.status(500).json({
         success: false, 
-        message: `Database save error: ${saveError.message}`,
-        mongoConnected: mongoose.connection.readyState === 1
+        message: `Database save error: ${saveError.message}`
       });
     }
   } catch(error) {
     console.error('Controller error:', error);
     res.status(500).json({
       success: false, 
-      message: `Contact Controller: ${error.message}`,
-      mongoConnected: mongoose.connection.readyState === 1
+      message: `Contact Controller: ${error.message}`
     });
   }
 }
