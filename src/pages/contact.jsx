@@ -10,7 +10,9 @@ export default function Contact() {
   const [formState, setFormState] = useState({
     name: '',
     email: '',
-    subject: '',
+    phone: '',
+    company: '',
+    projectType: '',
     message: '',
     loading: false
   });
@@ -28,13 +30,37 @@ export default function Contact() {
     });
   };
 
+  const projectTypes = [
+    { value: 'web-dev', label: 'Website Development' },
+    { value: 'app-dev', label: 'App Development' },
+    { value: 'seo', label: 'SEO Optimization' },
+    { value: 'smm', label: 'Social Media Marketing' },
+    { value: 'branding', label: 'Branding & Design' },
+    { value: 'other', label: 'Other Services' }
+  ];
+
+  // Budget ranges removed as requested
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormState({ ...formState, loading: true });
     
+    // Prepare form data, ensuring all fields are included
+    const formData = {
+      name: formState.name,
+      email: formState.email,
+      phone: formState.phone || '',
+      company: formState.company || '',
+      projectType: formState.projectType || '',
+      message: formState.message || ''
+    };
+    
+    // Debug: Log the form data being sent
+    console.log('Submitting form data:', formData);
+    
     try {
       // Send data to backend API
-      const response = await axios.post('/api/contact', formState);
+      const response = await axios.post('/api/contact', formData);
       console.log("API Response:", response.data);
       
       if (response.data.success) {
@@ -46,7 +72,8 @@ export default function Contact() {
         setFormState({
           name: "",
           email: "",
-          subject: "",
+          company: "",
+          projectType: "",
           message: "",
           loading: false
         });
@@ -107,98 +134,155 @@ export default function Contact() {
                   Fill out the form below and we'll get back to you as soon as possible. We're excited to learn about your project and how we can help bring your vision to life.
                 </p>
                 
-                {formStatus.submitted && (
-                  <div className={`p-4 rounded-md mb-6 ${formStatus.error ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'}`}>
-                    {formStatus.message}
-                  </div>
-                )}
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">Your Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      value={formState.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-md border border-foreground/20 bg-background focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2">Email Address</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={formState.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-md border border-foreground/20 bg-background focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="subject" className="block text-sm font-medium mb-2">Subject</label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      required
-                      value={formState.subject}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-md border border-foreground/20 bg-background focus:outline-none focus:ring-2 focus:ring-accent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-2">Your Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows="5"
-                      required
-                      value={formState.message}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-md border border-foreground/20 bg-background focus:outline-none focus:ring-2 focus:ring-accent"
-                    ></textarea>
-                  </div>
-                  
-                  <div>
-                    <button
-                      type="submit"
-                      className="px-6 py-3 bg-accent text-white rounded-full hover-scale"
-                      disabled={formState.loading}
+                {formStatus.submitted ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-6">
+                      {/* Success Icon (Checkmark) */}
+                      <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-purple-400"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4">Message Sent Successfully!</h3>
+                    <p className="text-gray-300 mb-8 max-w-md">{formStatus.message}</p>
+                    <button 
+                      onClick={() => {
+                        setFormStatus({ submitted: false, error: false, message: '' });
+                        setFormState({
+                          name: '',
+                          email: '',
+                          company: '',
+                          projectType: '',
+                          budget: '',
+                          message: '',
+                          loading: false
+                        });
+                      }}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center gap-2 hover:opacity-90 transition"
                     >
-                      {formState.loading ? 'Submitting...' : 'Send Message'}
+                      Send Another Message
                     </button>
                   </div>
-                </form>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      {/* Name Field */}
+                      <div className="space-y-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-300">Full Name</label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                            value={formState.name}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder:text-gray-500"
+                            placeholder="John Doe"
+                          />
+                        </div>
+                      </div>
+                      {/* Email Field */}
+                      <div className="space-y-2">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-300">Email Address</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          required
+                          value={formState.email}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder:text-gray-500"
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                      {/* Phone Field (Optional) */}
+                      <div className="space-y-2">
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-300">Phone Number (Optional)</label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formState.phone}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder:text-gray-500"
+                          placeholder="+1 (123) 456-7890"
+                        />
+                      </div>
+                      {/* Company Field */}
+                      <div className="space-y-2">
+                        <label htmlFor="company" className="block text-sm font-medium text-gray-300">Company (Optional)</label>
+                        <input
+                          type="text"
+                          id="company"
+                          name="company"
+                          value={formState.company}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder:text-gray-500"
+                          placeholder="Your Company"
+                        />
+                      </div>
+                      {/* Project Type Field */}
+                      <div className="space-y-2">
+                        <label htmlFor="projectType" className="block text-sm font-medium text-gray-300">What do you need help with?</label>
+                        <select
+                          id="projectType"
+                          name="projectType"
+                          required
+                          value={formState.projectType}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition text-gray-300"
+                        >
+                          <option value="" disabled className="text-gray-500">Select service type</option>
+                          {projectTypes.map(type => (
+                            <option key={type.value} value={type.value}>{type.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                      {/* Message Field */}
+                      <div className="space-y-2 md:col-span-2">
+                        <label htmlFor="message" className="block text-sm font-medium text-gray-300">Tell us about your project</label>
+                        <textarea
+                          id="message"
+                          name="message"
+                          rows="4"
+                          required
+                          value={formState.message}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder:text-gray-500"
+                          placeholder="Share some details about your project goals and timeline..."
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                      <div className="text-sm text-gray-400">
+                        We'll get back to you within 24 hours
+                      </div>
+                      <button
+                        type="submit"
+                        className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-500 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition disabled:opacity-50"
+                        disabled={formState.loading}
+                      >
+                        {formState.loading ? (
+                          <span>Sending...</span>
+                        ) : (
+                          <>
+                            <span>Send Message</span>
+                            {/* Paper plane icon */}
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform"><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13" /><path strokeLinecap="round" strokeLinejoin="round" d="M22 2L15 22l-4-9-9-4 22-7z" /></svg>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </SlideIn>
             </div>
-            
             <div>
-              <SlideIn direction="right" delay={0.2}>
+              <SlideIn direction="right">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">Contact Information</h2>
                 <p className="text-secondary mb-8">
-                  Prefer to reach out directly? You can use any of the following contact methods:
+                  Feel free to reach out to us through any of the following channels. We're here to help and answer any questions you may have.
                 </p>
                 
                 <div className="space-y-6">
-                  <div className="flex items-start">
-                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent mr-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-1">Email</h3>
-                      <p className="text-secondary">hello@growmint.com</p>
-                    </div>
-                  </div>
-                  
                   <div className="flex items-start">
                     <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -208,6 +292,18 @@ export default function Contact() {
                     <div>
                       <h3 className="text-xl font-bold mb-1">Phone</h3>
                       <p className="text-secondary">+1 (555) 123-4567</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold mb-1">Email</h3>
+                      <p className="text-secondary">hello@growmint.com</p>
                     </div>
                   </div>
                   

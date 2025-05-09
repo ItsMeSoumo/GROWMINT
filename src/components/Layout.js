@@ -129,7 +129,7 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <div className="flex items-center">
+            <div className="flex items-center justify-center w-full">
               {/* Hamburger button for mobile */}
               <button
                 className="p-2 md:hidden focus:outline-none"
