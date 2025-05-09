@@ -8,13 +8,10 @@ export default async function handler(req, res) {
 
   try {
     // Connect to MongoDB if not connected
-    console.log('[DEBUG] Mongoose readyState before connect:', mongoose.connection.readyState);
+    
     if (mongoose.connection.readyState !== 1) {
       // Make sure you have a MONGODB_URI in your .env file
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log('[DEBUG] Mongoose connected! readyState:', mongoose.connection.readyState);
-    } else {
-      console.log('[DEBUG] Mongoose already connected. readyState:', mongoose.connection.readyState);
     }
     
     const newContact = new contactModel(req.body);      

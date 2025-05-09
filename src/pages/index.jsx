@@ -886,7 +886,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      5<span className="text-purple-400">+</span>
+                      <span className="font-montserrat">5</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Years</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">Leading digital innovation</p>
@@ -938,7 +938,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      100<span className="text-purple-400">+</span>
+                      <span className="font-montserrat">100</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Completed</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
@@ -990,7 +990,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      50<span className="text-purple-400">+</span>
+                      <span className="font-montserrat">50</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Happy</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">Across various industries</p>
@@ -1042,7 +1042,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      24<span className="text-purple-400">/7</span>
+                      <span className="font-montserrat">24</span><span className="text-purple-400 font-montserrat">/7</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Premium</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">Always at your service</p>
