@@ -170,8 +170,9 @@ export default function Contact() {
                     <button
                       type="submit"
                       className="px-6 py-3 bg-accent text-white rounded-full hover-scale"
+                      disabled={formState.loading}
                     >
-                      Send Message
+                      {formState.loading ? 'Submitting...' : 'Send Message'}
                     </button>
                   </div>
                 </form>
