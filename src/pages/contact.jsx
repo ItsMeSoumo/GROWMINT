@@ -31,11 +31,12 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormState({ ...formState, loading: true });
-    
+    console.log('[DEBUG] Submitting contact form:', formState);
     try {
       // Send data to backend API
       const response = await axios.post('/api/contact', formState);
-      console.log("API Response:", response.data);
+      console.log('[DEBUG] API Response:', response.data);
+      console.log('[DEBUG] Mongo connected:', response.data.mongoConnected);
       
       if (response.data.success) {
         setFormStatus({ 
@@ -58,14 +59,16 @@ export default function Contact() {
         });
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error('[DEBUG] Error submitting form:', error);
       setFormStatus({ 
         submitted: true, 
         error: true, 
         message: "Unable to connect to the server. Please try again later." 
       });
     }
+    console.log('[DEBUG] Form status after submit:', formStatus);
   };
+
 
   return (
     <Layout>
