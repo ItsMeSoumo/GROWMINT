@@ -886,7 +886,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      <span className="font-montserrat">5</span><span className="text-purple-400 font-montserrat">+</span>
+                      <span className="font-montserrat">3</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Years</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">Leading digital innovation</p>
@@ -938,7 +938,7 @@ export default function Home() {
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      <span className="font-montserrat">100</span><span className="text-purple-400 font-montserrat">+</span>
+                      <span className="font-montserrat">20</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
                     <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Completed</p>
                     <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
@@ -1158,10 +1158,10 @@ export default function Home() {
               </svg>
             </div>
             <div className="relative">
-              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 neon-text font-display tracking-tight">UI/UX Design</h3>
+              <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 neon-text font-display tracking-tight">SEO Services</h3>
             </div>
             <p className="text-secondary text-sm font-light leading-relaxed">
-              Intuitive, beautiful interfaces designed to engage users and provide seamless experiences across all devices.
+             Result-driven SEO services that improve search rankings, drive organic traffic, and boost online visibility across all platforms.
             </p>
           </motion.div>
         </div>
@@ -1216,10 +1216,10 @@ export default function Home() {
               </div>
               <div className="flex-1">
                 <div className="relative">
-                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 neon-text font-display tracking-tight">E-commerce Solutions</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 neon-text font-display tracking-tight">Social Media Marketing</h3>
                 </div>
                 <p className="text-secondary text-sm font-light leading-relaxed">
-                  Secure, scalable online stores with seamless payment integration, inventory management, and detailed customer analytics.
+                Strategic social media marketing that boosts brand awareness, drives engagement, and converts followers into loyal customers.
                 </p>
               </div>
             </div>
