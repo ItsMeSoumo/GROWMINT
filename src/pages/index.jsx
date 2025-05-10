@@ -269,7 +269,7 @@ export default function Home() {
         {/* Accent border line */}
         <div className="absolute h-full w-0.5 border-r border-accent/30 -z-10 rounded-full right-1/2 transform translate-x-1/2" />
         
-        {['hero', 'about', 'services', 'testimonials', 'cta'].map((section, index) => (
+        {['hero', 'about', 'services', 'cta'].map((section, index) => (
           <button
             key={section}
             onClick={() => scrollToSection(section)}
@@ -906,61 +906,11 @@ export default function Home() {
             </div>
           </SpotlightCard>
           
-          {/* Happy Clients Card */}
-          <SpotlightCard
-            className="custom-spotlight-card"
-            spotlightColor="rgba(0, 229, 255, 0.2)"
-          >
-            <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
-              <motion.div 
-                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-3 sm:p-4 scroll-reveal scroll-reveal-up reveal-delay-300 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                whileHover={{ 
-                  y: -5, 
-                  boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
-                  transition: { duration: 0.1 }
-                }}
-              >
-                {/* Enhanced glow effects */}
-                <div className="absolute top-0 left-0 w-3/4 h-1/4 bg-[radial-gradient(ellipse_at_center,rgba(156,60,183,0.2)_0%,transparent_70%)]" />
-                <div className="absolute -bottom-4 -right-4 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(156,60,183,0.15)_0%,transparent_70%)]" />
-                {/* White border lighting effect */}
-                <div className="absolute inset-0 border border-white/10 rounded-xl rounded-tr-[0.75rem] opacity-80" />
-                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
-                <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
-                {/* Glass effect */}
-                <div className="absolute inset-0 bg-white/5 opacity-10" />
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  {/* Top section with icon and label */}
-                  <div className="text-center mb-2 md:mb-4">
-                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Clients</p>
-                  </div>
-                  {/* Bottom section with number and text */}
-                  <div className="text-center pb-1">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                      <span className="font-montserrat">50</span><span className="text-purple-400 font-montserrat">+</span>
-                    </div>
-                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Happy</p>
-                    <p className="text-white/40 text-xs sm:text-sm font-light">Across various industries</p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </SpotlightCard>
+
           
-          {/* Premium Support Card */}
+          {/* Premium Support Card - Now stretched across the full width */}
           <SpotlightCard
-            className="custom-spotlight-card"
+            className="custom-spotlight-card col-span-2"
             spotlightColor="rgba(0, 229, 255, 0.2)"
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
@@ -987,23 +937,55 @@ export default function Home() {
                 <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
                 {/* Glass effect */}
                 <div className="absolute inset-0 bg-white/5 opacity-10" />
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  {/* Top section with icon and label */}
-                  <div className="text-center mb-2 md:mb-4">
-                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                      <svg className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="relative z-10 flex flex-col md:flex-row h-full justify-between">
+                  {/* Left section with icon and label */}
+                  <div className="text-center md:text-left md:flex-1 mb-4 md:mb-0 md:pr-6">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto md:mx-0 mb-3 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Support</p>
+                    <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-purple-300/90 font-medium mt-2">Premium Support</p>
                   </div>
-                  {/* Bottom section with number and text */}
-                  <div className="text-center pb-1">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                  
+                  {/* Center section with number and text */}
+                  <div className="text-center md:text-left md:flex-1 md:border-l md:border-r border-purple-500/20 md:px-6">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       <span className="font-montserrat">24</span><span className="text-purple-400 font-montserrat">/7</span>
                     </div>
-                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Premium</p>
-                    <p className="text-white/40 text-xs sm:text-sm font-light">Always at your service</p>
+                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Dedicated Assistance</p>
+                    <p className="text-white/40 text-xs sm:text-sm font-light">Round-the-clock availability</p>
+                  </div>
+                  
+                  {/* Right section with additional features */}
+                  <div className="hidden md:block md:flex-1 md:pl-6 text-left">
+                    <p className="text-white/90 text-sm font-medium mb-3">Our commitment to you:</p>
+                    <ul className="space-y-2">
+                      <li className="flex items-center text-white/70 text-xs">
+                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
+                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        Rapid response times
+                      </li>
+                      <li className="flex items-center text-white/70 text-xs">
+                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
+                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        Expert technical assistance
+                      </li>
+                      <li className="flex items-center text-white/70 text-xs">
+                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
+                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        Continuous monitoring
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </motion.div>
@@ -1263,139 +1245,7 @@ export default function Home() {
     </div>
   </section>
 
-  {/* Testimonials Section */}
-  <section id="testimonials" className="py-20 md:py-28 relative overflow-hidden">
-    <div className="absolute inset-0 bg-black" />
-    
-    {/* Enhanced premium background effects */}
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(123,31,162,0.15)_0%,rgba(128,0,255,0.1)_25%,rgba(76,29,149,0.05)_50%,rgba(0,0,0,0)_100%)] blur-2xl"></div>
-      
-      {/* Animated gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-[30vw] h-[30vw] rounded-full bg-gradient-to-br from-violet-600/10 via-purple-500/5 to-transparent blur-3xl opacity-40 animate-float" style={{animationDuration: '25s'}}></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[20vw] h-[20vw] rounded-full bg-gradient-to-tl from-blue-600/10 via-indigo-500/5 to-transparent blur-3xl opacity-40 animate-float-delay" style={{animationDuration: '20s'}}></div>
-      
-      {/* Premium 3D grid effect */}
-      <div className="absolute inset-0 opacity-5 bg-[url('/grid.svg')]" />
-      
-      {/* Animated diagonal line */}
-      <div className="absolute left-0 right-0 top-1/2 h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent transform -rotate-2"></div>
-      <div className="absolute left-0 right-0 bottom-1/3 h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent transform rotate-2"></div>
-    </div>
-    
-    {/* Edge fades */}
-    <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black to-transparent" />
-    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
-    
-    <div className="container mx-auto px-4 sm:px-6 md:px-12 relative z-10">
-      {/* Heading Section with enhanced animations */}
-      <div className="text-center mb-16 md:mb-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-        >
-          <div className="inline-block relative mb-4">
-            <p className="premium-text text-accent tracking-[0.3em] relative z-10">CLIENT TESTIMONIALS</p>
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
-          </div>
-          
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-6 md:mb-8 text-glow font-merriweather tracking-tight leading-none">
-            <span className="relative">
-              <span className="relative z-10">Success Stories</span>
-              <span className="absolute -bottom-2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent"></span>
-            </span>
-          </h2>
-          
-          <div className="max-w-3xl mx-auto">
-            <p className="text-white/80 text-lg md:text-xl font-light font-montserrat leading-relaxed tracking-wide">
-              Hear from our clients about the transformative impact of our premium web development services.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-      
-      {/* Enhanced layout with staggered animation and 3D perspective */}
-      <div className="perspective-[1000px]">
-        <div className="max-w-7xl mx-auto">
-          {/* Single-line carousel/slider layout */}
-          <div className="relative">
-            {/* Enhanced background glow */}
-            <div className="absolute -inset-10 bg-gradient-to-tl from-accent/5 via-purple-500/10 to-blue-600/5 blur-3xl opacity-50 rounded-full animate-pulse" style={{animationDuration: '10s'}}></div>
-            
-            {/* Testimonials slider container with overflow */}
-            <div className="relative overflow-hidden py-8">
-              <div className="flex flex-nowrap space-x-6 md:space-x-8 px-4 transition-transform duration-500" style={{ transform: `translateX(-${testimonialGroup * 100}%)` }}>
-                {testimonialsData.map((t, idx) => (
-                  <div key={idx} className="w-full md:w-[550px] lg:w-[650px] flex-shrink-0">
-                    <Testimonial 
-                      quote={t.quote}
-                      author={t.author}
-                      company={t.company}
-                      imageSrc={t.imageSrc}
-                      delay={0.1 + idx * 0.1}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <div className="flex justify-between items-center mt-12">
-              <motion.button 
-                className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white transition-all duration-300 overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handlePrevTestimonial}
-              >
-                {/* Arrow button effects */}
-                <span className="absolute inset-0 bg-gradient-to-tr from-accent/0 to-accent/0 group-hover:from-accent/10 group-hover:to-purple-500/5 transition-all duration-500"></span>
-                <span className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
-                <span className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
-                
-                {/* Left arrow icon */}
-                <svg className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </motion.button>
-              
-              {/* Testimonial indicator dots */}
-              <div className="flex space-x-3 justify-center">
-                {[0, 1].map((groupIdx) => (
-                  <button
-                    key={groupIdx}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${testimonialGroup === groupIdx ? 'bg-accent w-8' : 'bg-white/20 hover:bg-white/40'}`}
-                    aria-label={`Go to testimonial group ${groupIdx + 1}`}
-                    onClick={() => setTestimonialGroup(groupIdx)}
-                  />
-                ))}
-              </div>
-              
-              <motion.button 
-                className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white transition-all duration-300 overflow-hidden"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleNextTestimonial}
-              >
-                {/* Arrow button effects */}
-                <span className="absolute inset-0 bg-gradient-to-tr from-accent/0 to-accent/0 group-hover:from-accent/10 group-hover:to-purple-500/5 transition-all duration-500"></span>
-                <span className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
-                <span className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></span>
-                
-                {/* Right arrow icon */}
-                <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Premium view more button removed */}
-    </div>
-  </section>
+  {/* Testimonials Section - Commented out as requested */}
 
   {/* CTA Section */}
   <section id="cta" className="py-16 md:py-20 relative">
