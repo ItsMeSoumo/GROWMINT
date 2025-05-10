@@ -1,380 +1,880 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import Layout from '@/components/Layout';
-import { FadeIn, SlideIn, ScaleIn } from '@/components/animations';
 
-// Service detail component
-const ServiceDetail = ({ title, description, features, icon, alignment = "left", delay = 0 }) => (
-  <div className={`grid grid-cols-1 md:grid-cols-5 gap-8 items-center my-20 ${alignment === "right" ? "md:text-right" : ""}`}>
-    <div className={`md:col-span-3 ${alignment === "right" ? "md:order-2" : ""}`}>
-      <SlideIn direction={alignment === "right" ? "right" : "left"} delay={delay}>
-        <h3 className="text-2xl md:text-3xl font-bold mb-4">{title}</h3>
-        <p className="text-secondary mb-6">{description}</p>
-        
-        <ul className={`space-y-3 ${alignment === "right" ? "ml-auto" : ""}`}>
-          {features.map((feature, index) => (
-            <li key={index} className={`flex items-start ${alignment === "right" ? "justify-end" : ""}`}>
-              <span className="text-accent mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </span>
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </SlideIn>
-    </div>
-    
-    <div className={`md:col-span-2 ${alignment === "right" ? "md:order-1" : ""}`}>
-      <FadeIn delay={delay + 0.2}>
-        <div className="bg-background/50 border border-foreground/10 rounded-xl p-6 aspect-square flex items-center justify-center shadow-lg">
-          <div className="text-accent text-8xl">
-            {icon}
-          </div>
-        </div>
-      </FadeIn>
-    </div>
-  </div>
-);
+// Particle background component
+const ParticleBackground = () => {
+  const canvasRef = useRef(null);
 
-// Process step component
-const ProcessStep = ({ number, title, description, delay = 0 }) => (
-  <FadeIn delay={delay}>
-    <div className="bg-background border border-foreground/10 rounded-xl p-8 hover:shadow-lg transition-all duration-300 h-full">
-      <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white text-xl font-bold mb-6">
-        {number}
-      </div>
-      <h3 className="text-xl font-bold mb-3">{title}</h3>
-      <p className="text-secondary">{description}</p>
-    </div>
-  </FadeIn>
-);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationFrameId;
 
-export default function Services() {
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.3 + 0.1;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const init = () => {
+      particles = [];
+      for (let i = 0; i < 75; i++) {
+        particles.push(new Particle());
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    resizeCanvas();
+    init();
+    animate();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-10"
+      style={{ opacity: 0.4 }}
+    />
+  );
+};
+
+// Animated section component
+const AnimatedSection = ({ children, delay = 0 }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.8, delay }}
+      className="relative"
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const ServicesPage = () => {
+  // For the header animations
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Services | Growmint</title>
-        <meta name="description" content="Professional web development services including responsive design and modern UI/UX" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Our Services | GROWMINT</title>
+        <meta name="description" content="Explore our comprehensive web development and social media marketing services designed to grow your business." />
       </Head>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-background relative overflow-hidden">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="max-w-3xl">
-            <SlideIn direction="up">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                Our <span className="text-accent">Services</span>
+      <ParticleBackground />
+
+      <main className="bg-black text-white min-h-screen">
+        {/* Full page background image */}
+        <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
+          <img
+            src="https://images.unsplash.com/photo-1698847626251-efac0f7517cc?q=80&w=2127&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Page background"
+            className="w-full h-full object-cover object-center select-none pointer-events-none fixed inset-0"
+            draggable="false"
+            style={{ userSelect: 'none' }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#181022]/90 via-[#181022]/90 to-purple-900/70"></div>
+        </div>
+
+        {/* Animated Header Section */}
+        <section className="relative pt-32 pb-24 px-8 overflow-hidden z-10">
+          {/* Animated grid background */}
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-8 z-10 pointer-events-none"></div>
+          
+          <div className="container mx-auto relative z-20">
+            {/* Header Content */}
+            <div
+              className={`text-center max-w-4xl mx-auto transition-all duration-1000 ease-out ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+              }`}
+            >
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">
+                Our Services
               </h1>
-            </SlideIn>
-            
-            <FadeIn delay={0.2}>
-              <p className="text-xl text-secondary mb-8">
-                We provide cutting-edge web solutions using the latest technologies to help your business stand out in the digital landscape.
+              <p className="text-xl md:text-2xl text-purple-100/80 mb-12 max-w-3xl mx-auto">
+                Innovative digital solutions crafted to elevate your online presence and drive measurable results.
               </p>
-            </FadeIn>
-            
-            <div className="flex flex-wrap gap-4">
-              <Link href="/contact" className="inline-block px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors">
-                Get Started
-              </Link>
-              <Link href="/portfolio" className="inline-block px-6 py-3 border border-foreground/20 rounded-lg hover:bg-foreground/5 transition-colors">
-                View Our Work
-              </Link>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+                <a
+                  href="#contact"
+                  className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-medium hover:shadow-lg hover:shadow-purple-500/40 transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Get Started
+                </a>
+                <a
+                  href="#testimonials"
+                  className="px-8 py-3 rounded-full border border-purple-500/30 text-purple-400 font-medium hover:bg-purple-500/10 transition-all duration-300"
+                >
+                  View Our Work
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
         
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-accent/10 rounded-full blur-3xl"></div>
-        <div className="absolute -top-12 -left-12 w-48 h-48 bg-accent/10 rounded-full blur-3xl"></div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-6 md:px-12">
-          <ServiceDetail 
-            title="Web Development" 
-            description="We build custom websites that are fast, secure, and optimized for all devices. Our development approach focuses on clean code, performance, and scalability to ensure your site can grow with your business."
-            features={[
-              "Custom websites built with React.js and Next.js",
-              "Responsive design for all devices and screen sizes",
-              "Performance optimization for fast load times",
-              "SEO-friendly structure and semantic markup",
-              "Integration with CMS and third-party APIs"
-            ]}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-            }
-            alignment="left"
-            delay={0.1}
-          />
-          
-          <ServiceDetail 
-            title="UI/UX Design" 
-            description="We create intuitive and beautiful user interfaces that engage visitors and drive conversions. Our design process combines aesthetic appeal with functional considerations to deliver exceptional user experiences."
-            features={[
-              "User research and persona development",
-              "Wireframing and prototyping",
-              "Custom UI component design",
-              "Interactive animations and transitions",
-              "Usability testing and optimization"
-            ]}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-            }
-            alignment="right"
-            delay={0.1}
-          />
-          
-          <ServiceDetail 
-            title="Digital Experience Design" 
-            description="We create engaging digital experiences that captivate your audience and communicate your brand's unique value. Our approach combines visual storytelling with intuitive interaction design to create memorable user journeys."
-            features={[
-              "Interactive elements and micro-interactions",
-              "Smooth animations and transitions",
-              "Engaging visual storytelling",
-              "Brand-aligned design systems",
-              "Accessibility and inclusive design"
-            ]}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            }
-            alignment="left"
-            delay={0.1}
-          />
-          
-          <ServiceDetail 
-            title="E-commerce Solutions" 
-            description="We build secure, scalable online stores that drive sales and provide excellent shopping experiences. Our e-commerce solutions are tailored to your specific business needs and integrate with your existing systems."
-            features={[
-              "Custom e-commerce websites",
-              "Secure payment processing integration",
-              "Inventory and order management systems",
-              "Mobile-optimized shopping experiences",
-              "Customer analytics and insights"
-            ]}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            }
-            alignment="right"
-            delay={0.1}
-          />
-          
-          <ServiceDetail 
-            title="Web Applications" 
-            description="We develop custom web applications that solve complex business problems and optimize workflows. Our applications are secure, scalable, and built with modern technologies to ensure long-term performance."
-            features={[
-              "Custom business applications",
-              "Admin dashboards and management systems",
-              "SaaS platform development",
-              "Real-time collaboration tools",
-              "Database design and implementation"
-            ]}
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
-            }
-            alignment="left"
-            delay={0.1}
-          />
-        </div>
-      </section>
-
-      {/* Our Process Section */}
-      <section className="py-20 bg-background/50 border-y border-foreground/10">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <FadeIn>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Process</h2>
-              <p className="text-secondary max-w-3xl mx-auto">
-                We follow a structured approach to deliver exceptional results for every project.
+        {/* Main Content */}
+        <div className="container mx-auto px-6 py-12 relative z-10">
+          {/* Web Development Section */}
+          <AnimatedSection>
+            <div className="mb-12 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
+                Web Development
+              </h2>
+              <p className="text-xl text-purple-100/80 max-w-2xl mx-auto">
+                Custom websites crafted with cutting-edge technologies, focused on performance and exceptional user experience.
               </p>
-            </FadeIn>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <ProcessStep 
-              number="1" 
-              title="Discovery" 
-              description="We begin by understanding your business, goals, target audience, and project requirements through in-depth research and consultation."
-              delay={0.1}
-            />
-            
-            <ProcessStep 
-              number="2" 
-              title="Strategy" 
-              description="We create a comprehensive plan outlining the project scope, timeline, technical specifications, and design direction."
-              delay={0.2}
-            />
-            
-            <ProcessStep 
-              number="3" 
-              title="Development" 
-              description="Our team brings your project to life using cutting-edge technologies, following best practices and rigorous quality standards."
-              delay={0.3}
-            />
-            
-            <ProcessStep 
-              number="4" 
-              title="Launch & Support" 
-              description="We ensure a smooth deployment and provide ongoing support to keep your website performing optimally."
-              delay={0.4}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Technologies Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <SlideIn direction="left">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Technologies We Use</h2>
-                <p className="text-secondary mb-6">
-                  We stay at the forefront of web technology, using modern tools and frameworks to deliver exceptional results.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">Next.js</span>
-                    </div>
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">React.js</span>
-                    </div>
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">Tailwind CSS</span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M13 7H7v6h6V7z" />
-                          <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">Framer Motion</span>
-                    </div>
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">Node.js</span>
-                    </div>
-                    <div className="flex items-center bg-background/80 p-3 rounded-lg border border-foreground/10 shadow-sm">
-                      <span className="bg-accent/10 text-accent p-2 rounded-md mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span className="font-medium">MongoDB</span>
-                    </div>
-                  </div>
-                </div>
-              </SlideIn>
             </div>
             
-            <div>
-              <FadeIn delay={0.2}>
-                <div className="bg-gradient-to-br from-accent/20 to-background p-8 rounded-xl shadow-lg border border-foreground/10">
-                  <h3 className="text-2xl font-bold mb-4">Why Choose Our Tech Stack</h3>
-                  <p className="text-secondary mb-6">
-                    Our carefully selected technology stack ensures that your website or application is:
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {/* Main Card 1 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Frontend Development
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Custom-built React and Next.js interfaces with animated UI elements and responsive Tailwind CSS styling.
                   </p>
-                  <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <span className="text-accent mr-2 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Fast-loading and responsive across all devices</span>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Mobile-first responsive design
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-accent mr-2 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Secure and built with modern best practices</span>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Animated UI components
                     </li>
-                    <li className="flex items-start">
-                      <span className="text-accent mr-2 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Scalable and easy to maintain</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-accent mr-2 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>SEO-friendly for better visibility</span>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Modern UI/UX implementation
                     </li>
                   </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
                 </div>
-              </FadeIn>
+              </div>
+              
+              {/* Main Card 2 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Backend Development
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Powerful Node.js and Express backends with optimized API endpoints and secure authentication systems.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Custom API development
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Secure JWT authentication
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Real-time data processing
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Main Card 3 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Website Maintenance
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Comprehensive website care packages ensuring your site stays fast, secure, and continuously updated.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Weekly backups & monitoring
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Security patches & updates
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Content & design refreshes
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-accent text-white">
-        <div className="container mx-auto px-6 md:px-12 text-center">
-          <ScaleIn>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to start your project?</h2>
-            <p className="text-white/80 max-w-3xl mx-auto mb-10">
-              Contact us today to discuss how we can help bring your vision to life with our expert web development services.
-            </p>
             
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact" className="inline-block px-8 py-3 bg-white text-accent font-medium rounded-lg hover:bg-white/90 transition-colors">
-                Get in Touch
-              </Link>
-              <Link href="/portfolio" className="inline-block px-8 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors">
-                View Our Portfolio
+            {/* Additional Web Dev Services */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mt-12">
+              {/* Additional Card 1 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Database Solutions
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Custom MongoDB and PostgreSQL database solutions with cloud-based architecture for scalability.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Optimized query performance
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Data security & encryption
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Scalable architecture
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Additional Card 2 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Web Design
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Stunning, conversion-focused designs featuring gradients, glass effects, and animated UI elements.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Modern glassmorphic UI
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Gradient and glow effects
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Interactive motion design
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Additional Card 3 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Hosting & Deployment
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Fast, secure cloud hosting with Vercel, Netlify, or AWS with advanced CDN and edge deployment.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Global CDN distribution
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      CI/CD pipeline integration
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      SSL & DDoS protection
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+
+          {/* Social Media Marketing Section */}
+          <AnimatedSection delay={0.2}>
+            <div className="mb-12 text-center">
+              <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
+                Social Media Marketing
+              </h2>
+              <p className="text-xl text-purple-100/80 max-w-2xl mx-auto">
+                Strategic social media solutions to grow your brand, increase engagement, and drive measurable results.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {/* Main Card 1 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Paid Advertising
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    High-converting ad campaigns across Facebook, Instagram, TikTok, and LinkedIn with advanced targeting.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Custom audience creation
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Performance-based bidding
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      ROAS optimization
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Main Card 2 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Content Strategy
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Data-driven content strategies with scheduled posts and analytics-based optimization.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Platform-specific strategies
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Content calendar automation
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Trend-based planning
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Main Card 3 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Content Creation
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Eye-catching social media assets with modern aesthetics, animations, and platform-optimized formats.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Custom graphic design
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Branded short-form video
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Engagement-focused captions
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Additional SMM Services */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mt-12">
+              {/* Additional Card 1 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Community Management
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Proactive community engagement strategies with personalized responses and audience growth tactics.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      24/7 response management
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Brand sentiment monitoring
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Follower growth campaigns
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Additional Card 2 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Influencer Marketing
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Targeted micro and macro influencer collaborations that authentically promote your brand to ideal audiences.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Strategic partner selection
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Campaign coordination
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Performance analysis
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+              
+              {/* Additional Card 3 */}
+              <div className="group relative">
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="flex items-center mb-4">
+                    <span className="text-purple-400 text-3xl md:text-4xl mr-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                    </span>
+                    <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
+                      Social Media Audits
+                    </h3>
+                  </div>
+                  <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    Data-powered social media analysis using advanced analytics tools to identify growth opportunities.
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Performance benchmarking
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Audience insights
+                    </li>
+                    <li className="flex items-center text-purple-100/80">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Growth strategy roadmap
+                    </li>
+                  </ul>
+                  
+                  {/* Animated border glow */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl border-2 border-purple-400/20 pointer-events-none z-20"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  {/* Subtle animated gradient overlay */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-400/10 via-transparent to-purple-700/10 pointer-events-none z-0"
+                    animate={{ opacity: [0.7, 0.9, 0.7] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+
+          {/* Get in Touch Section */}
+          <AnimatedSection delay={0.4}>
+            <div className="mt-20 text-center relative rounded-3xl border border-purple-500/30 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 to-purple-400/10 opacity-60 pointer-events-none"></div>
+              <h2 className="text-3xl md:text-4xl font-bold text-purple-400 mb-6 relative z-10">
+                Ready to Transform Your Digital Presence?
+              </h2>
+              <p className="text-purple-100/80 text-lg max-w-2xl mx-auto mb-8 relative z-10">
+                Let's discuss how we can help you achieve your business goals with our comprehensive digital solutions.
+              </p>
+              <Link href="/contact">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-semibold shadow-lg text-lg relative overflow-hidden group z-10"
+                >
+                  <span className="relative z-10">Get in Touch</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={false}
+                    animate={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
+                </motion.button>
               </Link>
             </div>
-          </ScaleIn>
+          </AnimatedSection>
         </div>
-      </section>
+      </main>
     </Layout>
   );
-}
+};
+
+export default ServicesPage;
