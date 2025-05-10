@@ -50,6 +50,15 @@ body {
   font-family: 'Merriweather', serif;
 }
 
+.font-dosis {
+  font-family: 'Dosis', sans-serif;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.05em;
+}
+
 .font-montserrat {
   font-family: 'Montserrat', sans-serif;
 }

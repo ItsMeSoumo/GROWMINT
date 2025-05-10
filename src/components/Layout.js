@@ -59,10 +59,10 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between w-full gap-8">
           <div 
-            className="text-2xl font-bold hover-scale tracking-tight growmint-glow-navbar font-display" 
+            className="text-2xl font-bold hover-scale growmint-glow-navbar font-orbitron" 
             onClick={handleLogoClick}
           >
-            Growmint
+            GROWMINT
           </div>
           
           {/* Desktop menu */}

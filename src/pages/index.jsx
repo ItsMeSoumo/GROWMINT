@@ -392,7 +392,7 @@ export default function Home() {
                 {/* Glow effect moved outside to prevent box clipping */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 via-purple-500/40 to-pink-500/10 blur-2xl opacity-50 animate-pulse pointer-events-none" style={{animationDuration: '5s', zIndex: 0}}></div>
                 <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/0 via-accent/30 to-blue-500/0 blur-3xl opacity-40 animate-pulse pointer-events-none" style={{animationDuration: '7s', zIndex: 0}}></div>
-                <h1 className="relative z-10 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 font-luxury tracking-tight leading-none">
+                <h1 className="relative z-10 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 font-orbitron tracking-tight leading-none">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E2E8F0] to-[#94A3B8] inline-block mr-2 md:mr-4">GROW</span>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#818CF8] via-[#C084FC] to-[#E879F9] inline-block animate-pulse premium-text growmint-glow relative" style={{animationDuration: '4s'}}>
                     MINT
@@ -1435,29 +1435,7 @@ export default function Home() {
         </div>
       </div>
       
-      {/* Premium view more button */}
-      <div className="mt-16 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <Link 
-            href="/testimonials" 
-            className="relative overflow-hidden group inline-flex items-center gap-2 px-6 py-3 border border-accent/20 bg-black/30 rounded-full backdrop-blur-sm text-white/90 hover:text-white transition-all duration-300"
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-            <span className="relative z-10 font-montserrat tracking-wide text-sm uppercase">View All Testimonials</span>
-            <span className="relative z-10 rounded-full p-1 bg-accent/10 group-hover:bg-accent/20 transition-colors duration-300">
-              <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </span>
-            <span className="absolute inset-0 border border-accent/0 group-hover:border-accent/50 rounded-full transition-colors duration-500"></span>
-          </Link>
-        </motion.div>
-      </div>
+      {/* Premium view more button removed */}
     </div>
   </section>
 
