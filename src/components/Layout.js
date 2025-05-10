@@ -132,14 +132,23 @@ const Navbar = () => {
             <div className="flex items-center justify-center w-full">
               {/* Hamburger button for mobile */}
               <button
-                className="p-2 md:hidden focus:outline-none"
-                aria-label="Open menu"
+                className="p-2 md:hidden focus:outline-none relative z-50"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen((open) => !open)}
               >
-                <div className={`w-6 h-0.5 bg-foreground mb-1.5 transition-all ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
-                <div className={`w-6 h-0.5 bg-foreground mb-1.5 transition-all ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
-                <div className={`w-6 h-0.5 bg-foreground transition-all ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
+                {isMobileMenuOpen ? (
+                  <div className="relative w-6 h-6 flex items-center justify-center">
+                    <div className="w-6 h-0.5 bg-white absolute rotate-45"></div>
+                    <div className="w-6 h-0.5 bg-white absolute -rotate-45"></div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="w-6 h-0.5 bg-foreground mb-1.5 transition-all"></div>
+                    <div className="w-6 h-0.5 bg-foreground mb-1.5 transition-all"></div>
+                    <div className="w-6 h-0.5 bg-foreground transition-all"></div>
+                  </div>
+                )}
               </button>
             </div>
           )}
@@ -149,6 +158,16 @@ const Navbar = () => {
       {/* Mobile menu overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-start pt-24 md:hidden animate-fade-in">
+          <button
+            className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-accent/20 hover:bg-accent/30 transition-colors"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <nav className="flex flex-col gap-8 w-full max-w-xs mx-auto">
             <Link href="/" legacyBehavior>
               <a
