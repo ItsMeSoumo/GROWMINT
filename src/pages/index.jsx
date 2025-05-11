@@ -338,7 +338,7 @@ export default function Home() {
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.6}}
               >
-                Future of Web Development
+                Future of Digital Solution
               </motion.p>
               
               <motion.div 
