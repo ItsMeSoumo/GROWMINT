@@ -241,7 +241,7 @@ export default function Home() {
       </div>
     <Layout>
       <Head>
-        <title>Growmint | Premium Web Development Studio</title>
+        <title>Growmint</title>
         <meta name="description" content="Luxury web development services that transform digital visions into exceptional online experiences" />
         <link rel="icon" href="/favicon.ico" />
         <style jsx global>{`
