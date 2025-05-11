@@ -661,42 +661,44 @@ export default function Home() {
         </div>
         
         {/* Scroll prompt */}
-        <motion.div 
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: [0, 10, 0]}}
-          transition={{
-            y: {
-              repeat: Infinity,
-              duration: 2,
-              repeatDelay: 0.5,
-              ease: "easeInOut"
-            },
-            opacity: {
-              delay: 1.5,
-              duration: 1
-            }
-          }}
-        >
-          <button 
-            onClick={() => scrollToSection('about')}
-            className="flex flex-col items-center focus:outline-none group"
-            aria-label="Scroll to About section"
+        <div className="absolute bottom-10 left-0 right-0 w-full flex justify-center items-center z-10">
+          <motion.div 
+            className="flex flex-col items-center"
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: [0, 10, 0]}}
+            transition={{
+              y: {
+                repeat: Infinity,
+                duration: 2,
+                repeatDelay: 0.5,
+                ease: "easeInOut"
+              },
+              opacity: {
+                delay: 1.5,
+                duration: 1
+              }
+            }}
           >
-            <span className="mb-2 text-[#94A3B8] text-sm tracking-wider">Discover</span>
-            <div className="w-8 h-12 rounded-full border-2 border-[#94A3B8]/50 flex items-start justify-center p-1.5">
-              <motion.div 
-                className="w-1 h-2 bg-indigo-400 rounded-full" 
-                animate={{y: [0, 6, 0]}}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  repeatDelay: 0.5
-                }}
-              />
-            </div>
-          </button>
-        </motion.div>
+            <button 
+              onClick={() => scrollToSection('about')}
+              className="flex flex-col items-center focus:outline-none group"
+              aria-label="Scroll to About section"
+            >
+              <span className="mb-2 text-[#94A3B8] text-sm tracking-wider">Discover</span>
+              <div className="w-8 h-12 rounded-full border-2 border-[#94A3B8]/50 flex items-start justify-center p-1.5">
+                <motion.div 
+                  className="w-1 h-2 bg-indigo-400 rounded-full" 
+                  animate={{y: [0, 6, 0]}}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatDelay: 0.5
+                  }}
+                />
+              </div>
+            </button>
+          </motion.div>
+        </div>
         
         {/* Add keyframes for floating animation */}
         <style jsx global>{`
@@ -839,7 +841,7 @@ export default function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                       </svg>
                     </div>
-                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Experience</p>
+                    <p className="text-[10px] sm:text-xs uppercase tracking-wider text-purple-300/90 font-medium px-1 whitespace-nowrap overflow-visible">Experience</p>
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
@@ -898,8 +900,10 @@ export default function Home() {
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       <span className="font-montserrat">20</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
-                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Completed</p>
-                    <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
+                    <div className="flex flex-col items-center pr-0.1">
+                      <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Delivered</p>
+                      <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -939,17 +943,16 @@ export default function Home() {
                 <div className="absolute inset-0 bg-white/5 opacity-10" />
                 <div className="relative z-10 flex flex-col md:flex-row h-full justify-between">
                   {/* Left section with icon and label */}
-                  <div className="text-center md:text-left md:flex-1 mb-4 md:mb-0 md:pr-6">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto md:mx-0 mb-3 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                  <div className="text-center flex-1 mb-4 md:mb-0 md:pr-6">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
                       <svg className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-purple-300/90 font-medium mt-2">Premium Support</p>
                   </div>
-                  
                   {/* Center section with number and text */}
-                  <div className="text-center md:text-left md:flex-1 md:border-l md:border-r border-purple-500/20 md:px-6">
+                  <div className="text-center md:flex-1 md:border-l md:border-r border-purple-500/20 md:px-6">
                     <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       <span className="font-montserrat">24</span><span className="text-purple-400 font-montserrat">/7</span>
                     </div>
