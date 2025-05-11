@@ -16,27 +16,29 @@ export default async function handler(req, res) {
     console.log('Received form data:', req.body);
     
     // Create contact document with explicit field assignment
-    const contactData = {
+    const devData = {
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone || '',
       company: req.body.company,
       projectType: req.body.projectType,
-      message: req.body.message
+      budget: req.body.budget || '$10,000 - $50,000',
+      message: req.body.message,
+      createdAt: new Date()
     };
     
-    console.log('Saving contact data:', contactData);
+    console.log('Saving dev data:', devData);
     
     // Try a more direct approach - save directly to the database
     try {
       // Use the model but save directly to ensure all fields are included
-      const result = await mongoose.connection.db.collection('contact').insertOne(contactData);
-      console.log('Contact saved directly to DB:', result);
+      const result = await mongoose.connection.db.collection('dev').insertOne(devData);
+      console.log('Dev saved directly to DB:', result);
       
       res.status(201).json({
         message: 'Message sent successfully', 
         success: true, 
-        data: contactData
+        data: devData
       });
     } catch (saveError) {
       console.error('Error saving to database:', saveError);

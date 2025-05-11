@@ -1,31 +1,48 @@
-import React, { useState } from 'react';
-import Layout from '../components/Layout';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Head from 'next/head';
+import { motion } from 'framer-motion';
+import Layout from '../components/Layout';
 import axios from 'axios';
 
-const Development = () => {
+export default function SMM() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    company: '',
     phone: '',
-    projectType: 'Website',
-    budget: '$10,000 - $50,000',
-    message: '',
+    company: '',
+    platforms: [],
+    budget: '$1,000 - $5,000',
+    goals: '',
+    message: ''
   });
   
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
   
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    const { name, value, type, checked } = e.target;
+    
+    if (name === 'platforms') {
+      // Handle checkboxes for platforms
+      if (checked) {
+        setFormData(prev => ({
+          ...prev,
+          platforms: [...prev.platforms, value]
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          platforms: prev.platforms.filter(platform => platform !== value)
+        }));
+      }
+    } else {
+      // Handle other inputs
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
   
   const handleSubmit = async (e) => {
@@ -35,7 +52,7 @@ const Development = () => {
     
     try {
       // Send data to backend API
-      const response = await axios.post('/api/dev', formData);
+      const response = await axios.post('/api/smm', formData);
       console.log("API Response:", response.data);
       
       if (response.status === 201) {
@@ -43,11 +60,12 @@ const Development = () => {
         setFormData({
           name: '',
           email: '',
-          company: '',
           phone: '',
-          projectType: 'Website',
-          budget: '$10,000 - $50,000',
-          message: '',
+          company: '',
+          platforms: [],
+          budget: '$1,000 - $5,000',
+          goals: '',
+          message: ''
         });
       } else {
         setError("Something went wrong. Please try again.");
@@ -59,13 +77,12 @@ const Development = () => {
       setLoading(false);
     }
   };
-
   
   return (
     <Layout>
       <Head>
-        <title>Premium Development Services | Growmint</title>
-        <meta name="description" content="Exclusive $100,000 development services for enterprises seeking exceptional digital products." />
+        <title>Social Media Marketing | Growmint</title>
+        <meta name="description" content="Professional social media marketing services to grow your brand's online presence." />
       </Head>
       <div className="pt-32 pb-20">
         {/* Hero Section */}
@@ -78,37 +95,37 @@ const Development = () => {
           
           <div className="container mx-auto px-6 md:px-12 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-glow font-merriweather tracking-tight">Premium Development</h1>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-glow font-merriweather tracking-tight">Social Media Marketing</h1>
               <p className="text-xl text-white/80 leading-relaxed mb-8 font-montserrat">
-                Exclusive development services for enterprises seeking exceptional digital products.
+                Grow your brand's online presence with our professional social media marketing services.
               </p>
             </div>
           </div>
         </section>
         
-        {/* Premium Package Section */}
+        {/* Form Section */}
         <section className="py-20 relative">
           <div className="container mx-auto px-6 md:px-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 font-merriweather">Enterprise Development</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 font-merriweather">Boost Your Social Media Presence</h2>
                 <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mb-8" />
                 <p className="text-white/80 mb-6 leading-relaxed font-montserrat">
-                  Our premium development package is designed for businesses requiring the highest level of expertise, attention, and quality. For $100,000, you receive a comprehensive solution tailored to your enterprise needs.
+                  Our social media marketing services are designed to help businesses of all sizes establish a strong online presence, engage with their audience, and drive growth through strategic content and campaigns.
                 </p>
                 <p className="text-white/80 mb-6 leading-relaxed font-montserrat">
-                  This exclusive package includes full-scale development with multiple senior developers, dedicated project management, custom design, and a year of premium support and maintenance.
+                  Fill out the form to discuss how we can help you achieve your social media goals.
                 </p>
                 <div className="mt-8">
-                  <h3 className="text-2xl font-bold mb-4 font-merriweather">Package Includes:</h3>
+                  <h3 className="text-2xl font-bold mb-4 font-merriweather">Our Services Include:</h3>
                   <ul className="space-y-3">
                     {[
-                      { title: "Dedicated Development Team", desc: "A team of 5+ senior developers dedicated to your project" },
-                      { title: "Executive Design Services", desc: "Premium UX/UI design with unlimited revisions" },
-                      { title: "Custom Architecture", desc: "Enterprise-grade infrastructure and architecture" },
-                      { title: "Performance Optimization", desc: "Advanced performance tuning and scalability planning" },
-                      { title: "24/7 VIP Support", desc: "Priority support with guaranteed response times" },
-                      { title: "Exclusive IP Rights", desc: "Full ownership of all code and assets" }
+                      { title: "Content Creation", desc: "Engaging posts, graphics, and videos tailored to your brand" },
+                      { title: "Community Management", desc: "Active engagement with your audience and community building" },
+                      { title: "Paid Advertising", desc: "Strategic ad campaigns to reach your target audience" },
+                      { title: "Analytics & Reporting", desc: "Detailed insights and performance tracking" },
+                      { title: "Strategy Development", desc: "Custom social media strategies aligned with your goals" },
+                      { title: "Influencer Partnerships", desc: "Collaborations with relevant influencers in your industry" }
                     ].map((item, index) => (
                       <motion.li
                         key={index}
@@ -137,10 +154,7 @@ const Development = () => {
                 <div className="relative z-10 rounded-lg overflow-hidden shadow-2xl border border-white/10">
                   <div className="bg-black/50 backdrop-blur-md p-6 md:p-8">
                     <div className="mb-6 flex justify-between items-center">
-                      <h3 className="text-2xl md:text-3xl font-bold text-glow font-merriweather">Premium Package</h3>
-                      <div className="px-4 py-1 bg-accent/20 rounded-full border border-accent/30">
-                        <span className="text-accent font-bold font-montserrat">$100,000</span>
-                      </div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-glow font-merriweather">Get Started</h3>
                     </div>
                     
                     {submitted ? (
@@ -151,7 +165,7 @@ const Development = () => {
                           </svg>
                         </div>
                         <h4 className="text-xl font-bold mb-2">Request Submitted!</h4>
-                        <p className="text-white/70 mb-4">Thank you for your interest. A senior consultant will contact you within 24 hours.</p>
+                        <p className="text-white/70 mb-4">Thank you for your interest. Our social media team will contact you shortly.</p>
                         <button 
                           onClick={() => setSubmitted(false)}
                           className="text-accent underline hover:text-accent/80"
@@ -217,44 +231,65 @@ const Development = () => {
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor="projectType" className="block text-sm font-medium text-white/70 mb-1">Project Type</label>
-                            <select
-                              id="projectType"
-                              name="projectType"
-                              value={formData.projectType}
-                              onChange={handleChange}
-                              className="w-full px-4 py-2 bg-white/5 border border-white/10 focus:border-accent/50 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/20 transition"
-                            >
-                              <option value="Website">Website</option>
-                              <option value="Mobile App">Mobile App</option>
-                              <option value="Web Application">Web Application</option>
-                              <option value="E-commerce">E-commerce</option>
-                              <option value="Enterprise Software">Enterprise Software</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="budget" className="block text-sm font-medium text-white/70 mb-1">Budget</label>
-                            <select
-                              id="budget"
-                              name="budget"
-                              value={formData.budget}
-                              onChange={handleChange}
-                              className="w-full px-4 py-2 bg-white/5 border border-white/10 focus:border-accent/50 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/20 transition"
-                            >
-                              <option value="$10,000 - $50,000">$10,000 - $50,000</option>
-                              <option value="$50,000 - $100,000">$50,000 - $100,000</option>
-                              <option value="$100,000+">$100,000+</option>
-                              <option value="Custom">Custom - Let's Discuss</option>
-                            </select>
+                        <div>
+                          <label className="block text-sm font-medium text-white/70 mb-2">Platforms of Interest</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {['Instagram', 'Facebook', 'Twitter', 'LinkedIn', 'TikTok', 'YouTube'].map(platform => (
+                              <div key={platform} className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  id={platform.toLowerCase()}
+                                  name="platforms"
+                                  value={platform}
+                                  checked={formData.platforms.includes(platform)}
+                                  onChange={handleChange}
+                                  className="h-4 w-4 text-accent focus:ring-accent/25 border-white/30 rounded bg-white/5"
+                                />
+                                <label htmlFor={platform.toLowerCase()} className="ml-2 text-sm text-white/70">
+                                  {platform}
+                                </label>
+                              </div>
+                            ))}
                           </div>
                         </div>
                         
                         <div>
-                          <label htmlFor="message" className="block text-sm font-medium text-white/70 mb-1">Project Details</label>
+                          <label htmlFor="budget" className="block text-sm font-medium text-white/70 mb-1">Monthly Budget</label>
+                          <select
+                            id="budget"
+                            name="budget"
+                            value={formData.budget}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 bg-white/5 border border-white/10 focus:border-accent/50 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/20 transition"
+                          >
+                            <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+                            <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                            <option value="$10,000+">$10,000+</option>
+                            <option value="Not Sure">Not Sure - Let's Discuss</option>
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="goals" className="block text-sm font-medium text-white/70 mb-1">Your Social Media Goals</label>
+                          <select
+                            id="goals"
+                            name="goals"
+                            value={formData.goals}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 bg-white/5 border border-white/10 focus:border-accent/50 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/20 transition"
+                          >
+                            <option value="">Select your primary goal</option>
+                            <option value="Brand Awareness">Increase Brand Awareness</option>
+                            <option value="Lead Generation">Generate Leads</option>
+                            <option value="Community Building">Build Community</option>
+                            <option value="Sales">Drive Sales</option>
+                            <option value="Customer Service">Improve Customer Service</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label htmlFor="message" className="block text-sm font-medium text-white/70 mb-1">Additional Information</label>
                           <textarea
                             id="message"
                             name="message"
@@ -262,7 +297,7 @@ const Development = () => {
                             value={formData.message}
                             onChange={handleChange}
                             className="w-full px-4 py-2 bg-white/5 border border-white/10 focus:border-accent/50 rounded-lg text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-accent/20 transition"
-                            placeholder="Tell us about your project goals and requirements..."
+                            placeholder="Tell us about your current social media presence and specific needs..."
                           ></textarea>
                         </div>
                         
@@ -286,12 +321,12 @@ const Development = () => {
                               Processing...
                             </>
                           ) : (
-                            "Submit Premium Request"
+                            "Submit Request"
                           )}
                         </button>
                         
                         <p className="text-xs text-white/50 text-center mt-3">
-                          By submitting this form, you'll be connected with a senior consultant to discuss your project.
+                          Your information is secure and will not be shared with third parties.
                         </p>
                       </form>
                     )}
@@ -301,64 +336,7 @@ const Development = () => {
             </div>
           </div>
         </section>
-        
-        {/* Enterprise Benefits */}
-        <section className="py-20 relative">
-          <div className="container mx-auto px-6 md:px-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center font-merriweather">Why Choose Our Premium Service</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Exclusive Access",
-                  description: "Direct access to our most senior developers and designers with decades of combined experience.",
-                  icon: "🔐"
-                },
-                {
-                  title: "Bespoke Solutions",
-                  description: "Fully customized development approach specifically tailored to your enterprise requirements.",
-                  icon: "✨"
-                },
-                {
-                  title: "Priority Treatment",
-                  description: "Your project takes precedence with accelerated timelines and dedicated resources.",
-                  icon: "⚡"
-                }
-              ].map((value, index) => (
-                <motion.div 
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white/5 border border-white/10 rounded-lg p-8 hover:border-accent/30 transition-all duration-300"
-                >
-                  <div className="text-4xl mb-4">{value.icon}</div>
-                  <h3 className="text-xl font-bold mb-3 font-merriweather">{value.title}</h3>
-                  <p className="text-white/70 font-montserrat">{value.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* CTA Section */}
-        <section className="py-20 relative">
-          <div className="container mx-auto px-6 md:px-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 font-merriweather">Ready for Premium Development?</h2>
-              <p className="text-xl text-white/80 mb-8 font-montserrat">
-                Let's create an exceptional digital experience together.
-              </p>
-              <Link href="/contact" className="inline-flex items-center justify-center px-8 py-4 text-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full text-white font-semibold shadow-lg shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1 font-roboto">
-                Schedule a Consultation
-              </Link>
-            </div>
-          </div>
-        </section>
       </div>
     </Layout>
   );
-};
-
-export default Development;
+}
