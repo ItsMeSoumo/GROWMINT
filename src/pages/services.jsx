@@ -85,7 +85,7 @@ const ParticleBackground = () => {
 };
 
 // Animated section component
-const AnimatedSection = ({ children, delay = 0 }) => {
+const AnimatedSection = ({ children, delay = 0, className }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -95,7 +95,7 @@ const AnimatedSection = ({ children, delay = 0 }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.8, delay }}
-      className="relative"
+      className={`relative ${className}`}
     >
       {children}
     </motion.div>
@@ -187,7 +187,7 @@ const ServicesPage = () => {
               {/* Main Card 1 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,7 +240,7 @@ const ServicesPage = () => {
               {/* Main Card 2 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,7 +293,7 @@ const ServicesPage = () => {
               {/* Main Card 3 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -346,11 +346,11 @@ const ServicesPage = () => {
             </div>
             
             {/* Additional Web Dev Services */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 md:mt-12">
               {/* Additional Card 1 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -403,7 +403,7 @@ const ServicesPage = () => {
               {/* Additional Card 2 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -456,7 +456,7 @@ const ServicesPage = () => {
               {/* Additional Card 3 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -508,8 +508,21 @@ const ServicesPage = () => {
             </div>
           </AnimatedSection>
 
+          {/* Service Exploration Button for Web Development */}
+          <div className="flex justify-center md:justify-end mt-8 mb-16">
+            <Link href="/development">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-64 px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 font-medium text-sm"
+              >
+                Explore Web Development Services
+              </motion.button>
+            </Link>
+          </div>
+
           {/* Social Media Marketing Section */}
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection delay={0.2} className="mt-24">
             <div className="mb-12 text-center">
               <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
                 Social Media Marketing
@@ -523,7 +536,7 @@ const ServicesPage = () => {
               {/* Main Card 1 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -577,7 +590,7 @@ const ServicesPage = () => {
               {/* Main Card 2 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -630,7 +643,7 @@ const ServicesPage = () => {
               {/* Main Card 3 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -682,11 +695,11 @@ const ServicesPage = () => {
             </div>
             
             {/* Additional SMM Services */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 md:mt-12">
               {/* Additional Card 1 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -739,7 +752,7 @@ const ServicesPage = () => {
               {/* Additional Card 2 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -761,7 +774,7 @@ const ServicesPage = () => {
                       Strategic partner selection
                     </li>
                     <li className="flex items-center text-purple-100/80">
-                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-purple-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                       </svg>
                       Campaign coordination
@@ -792,11 +805,11 @@ const ServicesPage = () => {
               {/* Additional Card 3 */}
               <div className="group relative">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                   <div className="flex items-center mb-4">
                     <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                       </svg>
                     </span>
                     <h3 className="font-display font-bold tracking-tight text-xl md:text-2xl text-purple-400">
@@ -843,6 +856,19 @@ const ServicesPage = () => {
               </div>
             </div>
           </AnimatedSection>
+
+          {/* Service Exploration Button for SMM */}
+          <div className="flex justify-center md:justify-end mt-8 mb-16">
+            <Link href="/smm">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-64 px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-full hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 font-medium text-sm"
+              >
+                Explore Social Media Marketing
+              </motion.button>
+            </Link>
+          </div>
 
           {/* Get in Touch Section */}
           <AnimatedSection delay={0.4}>

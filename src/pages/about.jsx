@@ -222,7 +222,7 @@ const About = () => {
               <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">
                 About Us
               </h1>
-              <p className="text-xl md:text-2xl text-purple-100/80 mb-12 max-w-3xl mx-auto">
+              <p className={`text-xl md:text-2xl text-purple-100/80 mb-12 max-w-3xl mx-auto`}>
                 We're a team of passionate developers and designers creating exceptional digital experiences.
               </p>
               
@@ -260,7 +260,7 @@ const About = () => {
                 <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
                   About Us
                 </h2>
-                <p className="text-xl text-purple-100/80 max-w-2xl mx-auto">
+                <p className={`text-xl text-purple-100/80 max-w-2xl mx-auto`}>
                   At <Link href="/" className="text-purple-400 hover:text-purple-300 transition-colors">Growmint</Link>, we provide end-to-end digital solutions with a strong focus on both development and marketing.
                 </p>
               </div>
@@ -283,7 +283,7 @@ const About = () => {
                             Development Services
                           </h3>
                         </div>
-                        <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                        <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                           Comprehensive digital development solutions to power your online presence.
                         </p>
                         <ul className="space-y-2">
@@ -321,7 +321,7 @@ const About = () => {
                             Marketing Services
                           </h3>
                         </div>
-                        <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                        <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                           Strategic marketing solutions to grow your brand and drive engagement.
                         </p>
                         <ul className="space-y-2">
@@ -358,7 +358,7 @@ const About = () => {
                             Our Philosophy
                           </h3>
                         </div>
-                        <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                        <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                           We're a team of passionate professionals who believe in the power of digital innovation to drive real business growth.
                         </p>
                         <ul className="space-y-2">
@@ -403,20 +403,20 @@ const About = () => {
           
           {/* Team Values */}
             <AnimatedSection delay={0.2}>
-              <div className="mb-12 text-center">
+              <div className="mt-24 mb-12 text-center">
                 <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
                   Our Values
                 </h2>
-                <p className="text-xl text-purple-100/80 max-w-2xl mx-auto">
+                <p className={`text-xl text-purple-100/80 max-w-2xl mx-auto`}>
                   The core principles that guide our work and relationships.
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
                 {/* Value 1 */}
                 <div className="group relative">
                   <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                     <div className="flex items-center mb-4">
                       <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -427,7 +427,7 @@ const About = () => {
                         Innovation
                       </h3>
                     </div>
-                    <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                       We're constantly exploring new technologies and approaches to deliver cutting-edge solutions.
                     </p>
                     <ul className="space-y-2">
@@ -469,7 +469,7 @@ const About = () => {
                 {/* Value 2 */}
                 <div className="group relative">
                   <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                     <div className="flex items-center mb-4">
                       <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -480,7 +480,7 @@ const About = () => {
                         Quality
                       </h3>
                     </div>
-                    <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                       We're committed to delivering top-notch quality—whether it's clean, high-performing development or impactful, result-driven marketing.
                     </p>
                     <ul className="space-y-2">
@@ -522,7 +522,7 @@ const About = () => {
                 {/* Value 3 */}
                 <div className="group relative">
                   <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-3xl transition-all duration-300 group-hover:backdrop-blur-xl"></div>
-                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 shadow-xl backdrop-blur-xl p-10 z-10">
+                  <div className="relative rounded-3xl border border-purple-400/30 group-hover:border-purple-400/60 bg-gradient-to-br from-white/10 to-purple-900/10 backdrop-blur-xl p-10 z-10 h-full">
                     <div className="flex items-center mb-4">
                       <span className="text-purple-400 text-3xl md:text-4xl mr-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -533,7 +533,7 @@ const About = () => {
                         Collaboration
                       </h3>
                     </div>
-                    <p className="text-purple-100/90 font-light leading-relaxed mb-4">
+                    <p className={`text-purple-100/90 font-light leading-relaxed mb-4`}>
                       We collaborate closely with our clients at every step to ensure their vision is brought to life with precision, creativity, and purpose.
                     </p>
                     <ul className="space-y-2">
@@ -581,7 +581,7 @@ const About = () => {
                 <h2 className="text-3xl md:text-4xl font-bold text-purple-400 mb-6 relative z-10">
                   Ready to work with us?
                 </h2>
-                <p className="text-purple-100/80 text-lg max-w-2xl mx-auto mb-8 relative z-10">
+                <p className={`text-purple-100/80 text-lg max-w-2xl mx-auto mb-8 relative z-10`}>
                   Let's create something amazing together.
                 </p>
                 <Link
