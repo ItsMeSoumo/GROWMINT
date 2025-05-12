@@ -60,7 +60,7 @@ export default function Contact() {
     console.log('Submitting form data:', formData);
     
     try {
-      // Send data to backend API
+      // Send data to backend API for database storage and email sending
       const response = await axios.post('/api/contact', formData);
       console.log("API Response:", response.data);
       

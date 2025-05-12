@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import contactModel from '../../models/contact.model.js';
+import { resend } from '../../lib/resend';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -32,6 +33,54 @@ export default async function handler(req, res) {
       // Use the model but save directly to ensure all fields are included
       const result = await mongoose.connection.db.collection('contact').insertOne(contactData);
       console.log('Contact saved directly to DB:', result);
+      
+      // Send email notification
+      try {
+        const { name, email, message } = contactData;
+        
+        // Create HTML email content
+        const htmlContent = `
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e6ebf1; border-radius: 5px; }
+                h1 { color: #4CAF50; font-size: 24px; margin-bottom: 20px; }
+                .divider { border-top: 1px solid #e6ebf1; margin: 20px 0; }
+                .field { margin: 10px 0; }
+                .field strong { display: inline-block; min-width: 80px; }
+                .message { background-color: #f9f9f9; padding: 15px; border-radius: 4px; margin-top: 5px; }
+                .footer { font-style: italic; color: #666; font-size: 14px; margin-top: 20px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>New Contact Form Submission</h1>
+                <div class="divider"></div>
+                <div class="field"><strong>Name:</strong> ${name}</div>
+                <div class="field"><strong>Email:</strong> ${email}</div>
+                <div class="field"><strong>Message:</strong></div>
+                <div class="message">${message}</div>
+                <div class="divider"></div>
+                <div class="footer">This email was sent from the GrowMint website contact form.</div>
+              </div>
+            </body>
+          </html>
+        `;
+        
+        // Send email using Resend
+        await resend.emails.send({
+          from: "Growmint Contact <onboarding@resend.dev>",
+          to: "business@growmint.net",
+          subject: "New Contact Form Submission",
+          html: htmlContent,
+        });
+        
+        console.log('Email notification sent successfully');
+      } catch (emailError) {
+        // Log email error but don't fail the request
+        console.error('Error sending email notification:', emailError);
+      }
       
       res.status(201).json({
         message: 'Message sent successfully', 
