@@ -1,5 +1,6 @@
 import mongoose from "mongoose"; 
 
+// Create a fresh schema that exactly matches the form fields
 const smmSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -15,17 +16,26 @@ const smmSchema = new mongoose.Schema({
     },
     company: {
         type: String,
-        required: true
+        default: ''
     },
-    projectType: {
+    platforms: {
+        type: [String],
+        default: []
+    },
+    goals: {
         type: String,
-        required: true
+        default: ''
     },
     message: {
         type: String,
-        required: true
+        required: [true, 'message is required']
     }
-}, { timestamps: true, strict: false })
+}, { timestamps: true, strict: true }) // Set strict to true to only allow defined fields
 
-const smmModel = mongoose.models.smm || mongoose.model('smm', smmSchema, 'smm');
+// Force model recreation by deleting any existing model
+if (mongoose.models.smm) {
+    delete mongoose.models.smm;
+}
+
+const smmModel = mongoose.model('smm', smmSchema, 'smm');
 export default smmModel;
