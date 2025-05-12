@@ -15,35 +15,45 @@ function createAdminEmailHTML(data) {
     <html>
       <head>
         <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e6ebf1; border-radius: 5px; }
-          h1 { color: #4CAF50; font-size: 24px; margin-bottom: 20px; }
-          .divider { border-top: 1px solid #e6ebf1; margin: 20px 0; }
-          .field { margin: 10px 0; }
-          .field strong { display: inline-block; min-width: 80px; }
-          .message { background-color: #f9f9f9; padding: 15px; border-radius: 4px; margin-top: 5px; }
-          ul { margin-top: 5px; margin-bottom: 5px; }
-          .footer { font-style: italic; color: #666; font-size: 14px; margin-top: 20px; }
+          body { font-family: 'Georgia', serif; margin: 0; padding: 0; color: #333; background-color: #f9f9f9; }
+          .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+          .header { background-color: #2c3e50; padding: 25px; text-align: center; }
+          .logo { font-family: 'Times New Roman', serif; color: #ffffff; font-size: 28px; letter-spacing: 1px; font-weight: bold; }
+          .content { padding: 30px 40px; }
+          h1 { color: #2c3e50; font-size: 26px; margin-bottom: 25px; font-weight: normal; border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; }
+          .divider { border-top: 1px solid #e0e0e0; margin: 25px 0; }
+          .field { margin: 15px 0; font-size: 16px; line-height: 1.6; }
+          .field strong { display: inline-block; min-width: 100px; color: #2c3e50; }
+          .message { background-color: #f9f9f9; padding: 20px; border-left: 4px solid #2c3e50; margin-top: 10px; line-height: 1.6; }
+          ul { margin-top: 5px; margin-bottom: 5px; padding-left: 20px; }
+          li { margin-bottom: 5px; }
+          .footer { background-color: #f5f5f5; padding: 20px; text-align: center; color: #777; font-size: 14px; font-style: italic; }
         </style>
       </head>
       <body>
         <div class="container">
-          <h1>New Social Media Marketing Inquiry</h1>
-          <div class="divider"></div>
-          <div class="field"><strong>Name:</strong> ${name}</div>
-          <div class="field"><strong>Email:</strong> ${email}</div>
-          <div class="field"><strong>Phone:</strong> ${phone || 'Not provided'}</div>
-          <div class="field"><strong>Company:</strong> ${company || 'Not provided'}</div>
-          <div class="field"><strong>Platforms:</strong></div>
-          <div class="message">
-            ${typeof platformsList === 'string' ? platformsList : `<ul>${platformsList}</ul>`}
+          <div class="header">
+            <div class="logo">GROWMINT</div>
           </div>
-          <div class="field"><strong>Goals:</strong></div>
-          <div class="message">${goals || 'Not provided'}</div>
-          <div class="field"><strong>Message:</strong></div>
-          <div class="message">${message || 'Not provided'}</div>
-          <div class="divider"></div>
-          <div class="footer">This email was sent from the GrowMint website SMM inquiry form.</div>
+          <div class="content">
+            <h1>New Social Media Marketing Inquiry</h1>
+            <div class="field"><strong>Name:</strong> ${name}</div>
+            <div class="field"><strong>Email:</strong> ${email}</div>
+            <div class="field"><strong>Phone:</strong> ${phone || 'Not provided'}</div>
+            <div class="field"><strong>Company:</strong> ${company || 'Not provided'}</div>
+            <div class="field"><strong>Platforms:</strong></div>
+            <div class="message">
+              ${typeof platformsList === 'string' ? platformsList : `<ul>${platformsList}</ul>`}
+            </div>
+            <div class="field"><strong>Goals:</strong></div>
+            <div class="message">${goals || 'Not provided'}</div>
+            <div class="field"><strong>Message:</strong></div>
+            <div class="message">${message || 'Not provided'}</div>
+          </div>
+          <div class="footer">
+            This email was sent from the GrowMint website SMM inquiry form.<br>
+            &copy; ${new Date().getFullYear()} GrowMint. All rights reserved.
+          </div>
         </div>
       </body>
     </html>
@@ -58,25 +68,38 @@ function createUserEmailHTML(data) {
     <html>
       <head>
         <style>
-          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e6ebf1; border-radius: 5px; }
-          h1 { color: #4CAF50; font-size: 24px; margin-bottom: 20px; }
-          .divider { border-top: 1px solid #e6ebf1; margin: 20px 0; }
-          p { margin: 10px 0; line-height: 1.5; }
-          .footer { font-style: italic; color: #666; font-size: 14px; margin-top: 20px; }
+          body { font-family: 'Georgia', serif; margin: 0; padding: 0; color: #333; background-color: #f9f9f9; }
+          .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+          .header { background-color: #2c3e50; padding: 25px; text-align: center; }
+          .logo { font-family: 'Times New Roman', serif; color: #ffffff; font-size: 28px; letter-spacing: 1px; font-weight: bold; }
+          .content { padding: 30px 40px; }
+          h1 { color: #2c3e50; font-size: 26px; margin-bottom: 25px; font-weight: normal; border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; }
+          .divider { border-top: 1px solid #e0e0e0; margin: 25px 0; }
+          p { margin: 15px 0; font-size: 16px; line-height: 1.8; color: #444; }
+          .signature { margin-top: 30px; }
+          .footer { background-color: #f5f5f5; padding: 20px; text-align: center; color: #777; font-size: 14px; font-style: italic; }
         </style>
       </head>
       <body>
         <div class="container">
-          <h1>Thank You for Your Social Media Marketing Inquiry</h1>
-          <div class="divider"></div>
-          <p>Hello ${name},</p>
-          <p>Thank you for reaching out about your social media marketing needs. We have received your inquiry and will get back to you as soon as possible.</p>
-          <p>Our team typically responds within 24-48 business hours.</p>
-          <div class="divider"></div>
-          <p>Best regards,</p>
-          <p><strong>The GrowMint Team</strong></p>
-          <div class="footer">This is an automated confirmation email. Please do not reply to this message.</div>
+          <div class="header">
+            <div class="logo">GROWMINT</div>
+          </div>
+          <div class="content">
+            <h1>Thank You for Your Social Media Marketing Inquiry</h1>
+            <p>Dear ${name},</p>
+            <p>Thank you for reaching out to GrowMint regarding your social media marketing needs. We have received your inquiry and appreciate your interest in our services.</p>
+            <p>Our team of experts is reviewing your request and will get back to you as soon as possible with a personalized response. We typically respond within 24-48 business hours.</p>
+            <p>If you have any urgent questions in the meantime, please don't hesitate to contact us directly.</p>
+            <div class="signature">
+              <p>Warm regards,</p>
+              <p><strong>The GrowMint Team</strong></p>
+            </div>
+          </div>
+          <div class="footer">
+            This is an automated confirmation email. Please do not reply to this message.<br>
+            &copy; ${new Date().getFullYear()} GrowMint. All rights reserved.
+          </div>
         </div>
       </body>
     </html>
