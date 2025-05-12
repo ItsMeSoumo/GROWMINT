@@ -61,7 +61,12 @@ export default function Contact() {
     
     try {
       // Send data to backend API for database storage and email sending
-      const response = await axios.post('/api/contact', formData);
+      // Using full URL to avoid routing issues in production
+      const apiUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://www.growmint.net/api/contact' 
+        : '/api/contact';
+      console.log('Using API URL:', apiUrl);
+      const response = await axios.post(apiUrl, formData);
       console.log("API Response:", response.data);
       
       if (response.data.success) {
