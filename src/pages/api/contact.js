@@ -130,7 +130,7 @@ export default async function handler(req, res) {
       const emailResults = { admin: null, user: null, errors: [] };
       
       // Determine if we're in development mode
-      const isDevelopment = process.env.NODE_ENV !== 'production';
+      // const isDevelopment = process.env.NODE_ENV !== 'production';
       
       // Try to send admin notification email
       try {
@@ -153,20 +153,17 @@ export default async function handler(req, res) {
       try {
         // In development, send to business@growmint.net but include user info in the subject
         // In production, send to the actual user
-        const recipientEmail = isDevelopment ? 'business@growmint.net' : contactData.email;
-        const emailSubject = isDevelopment 
-          ? `[TEST] Thank You for Contacting GrowMint (would go to: ${contactData.email})` 
-          : "Thank You for Contacting GrowMint";
+        const recipientEmail = contactData.email;
+        const emailSubject = "Thank You for Contacting GrowMint";
         
-        console.log(`Sending confirmation email to ${isDevelopment ? 'test email' : 'user'}: ${recipientEmail}`);
+        console.log(`Sending confirmation email to ${recipientEmail}`);
         
         const userEmailResult = await resend.emails.send({
           from: "Growmint <contact@growmint.net>",
           to: recipientEmail,
           subject: emailSubject,
-          html: createUserEmailHTML(contactData),
-          // Only add BCC in production mode
-          ...(isDevelopment ? {} : { bcc: "business@growmint.net" }),
+          html: createUserEmailHTML(contactData)
+          // Removed BCC to admin as requested
         });
         
         console.log('User email response:', JSON.stringify(userEmailResult));
