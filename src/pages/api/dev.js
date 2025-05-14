@@ -159,7 +159,7 @@ export default async function handler(req, res) {
         console.log(`Sending confirmation email to ${recipientEmail}`);
         
         const userEmailResult = await resend.emails.send({
-          from: "Growmint <contact@growmint.net>",
+          from: "Growmint <business@growmint.net>",
           to: recipientEmail,
           subject: emailSubject,
           html: createUserEmailHTML(devData)
