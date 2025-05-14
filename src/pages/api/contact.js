@@ -156,10 +156,10 @@ export default async function handler(req, res) {
       
       // Try to send admin notification email
       try {
-        console.log('Sending admin notification email to business@growmint.net');
+        console.log('Sending admin notification email to admin@growmint.net');
         const adminEmailResult = await resend.emails.send({
-          from: "Growmint Contact <contact@growmint.net>",
-          to: "business@growmint.net",
+          from: "Growmint Contact <business@growmint.net>",
+          to: "admin@growmint.net",
           subject: "New Contact Form Submission",
           html: createAdminEmailHTML(contactData),
         });
@@ -181,7 +181,7 @@ export default async function handler(req, res) {
         console.log(`Sending confirmation email to ${recipientEmail}`);
         
         const userEmailResult = await resend.emails.send({
-          from: "Growmint <contact@growmint.net>",
+          from: "Growmint <business@growmint.net>",
           to: recipientEmail,
           subject: emailSubject,
           html: createUserEmailHTML(contactData)
