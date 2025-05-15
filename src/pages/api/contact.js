@@ -135,7 +135,7 @@ export default async function handler(req, res) {
     
     try {
       // FIRST APPROACH: Save directly to MongoDB collection (more reliable)
-      const result = await mongoose.connection.db.collection('contacts').insertOne(contactData);
+      const result = await mongoose.connection.db.collection('contact').insertOne(contactData);
       console.log('Contact saved directly to DB:', result);
       
       // SECOND APPROACH: Try to use Mongoose model as backup (if first approach fails)
