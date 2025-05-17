@@ -3,6 +3,6 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "rewrites": [
-    { "source": "/(?!api)(.*)", "destination": "/" }
+     { "source": "/(?!api)(.*)", "destination": "/" }
   ]
 }

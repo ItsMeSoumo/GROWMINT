@@ -26,7 +26,7 @@ export default function SignIn() {
   }, [session, router]);
   
   const handleChange = (e) => {
-    setFormData({
+     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
@@ -38,7 +38,7 @@ export default function SignIn() {
     
     // Simple validation
     if (!formData.email || !formData.password) {
-      setError('Please fill in all required fields');
+      setError('Please fill in all the required fields');
       return;
     }
     
