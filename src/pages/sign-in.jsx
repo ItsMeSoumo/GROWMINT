@@ -68,7 +68,7 @@ export default function SignIn() {
       const response = await fetch(`${domain}/api/auth/signup`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type' : 'application/json'
           },
           body: JSON.stringify({
             email: formData.email,
