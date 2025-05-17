@@ -4,5 +4,6 @@
   "framework": "nextjs",
   "rewrites": [
      { "source": "/(?!api)(.*)", "destination": "/" }
-  ]
+  ],
+  "debug": true
 }
