@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 // import CustomCursor from './CustomCursor';
-import { useAuth } from '@/pages/_app';
+import { useSession, signOut } from 'next-auth/react';
 import Footer from './footer';
 
 const Navbar = () => {
@@ -13,7 +13,7 @@ const Navbar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { data: session, status } = useSession();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +44,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    signOut({ redirect: false });
     setShowUserMenu(false);
     router.push('/');
   };
@@ -93,34 +93,34 @@ const Navbar = () => {
             </li>
           </ul>
           
-          {user ? (
+          {session ? (
             <div className="relative">
               <div 
                 className="flex items-center gap-2 cursor-pointer hover-scale"
                 onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">
-                  {user.name[0].toUpperCase()}
+                  {session.user.username ? session.user.username[0].toUpperCase() : session.user.email[0].toUpperCase()}
                 </div>
-                <span className="hidden md:inline text-white font-medium">{user.name}</span>
+                <span className="hidden md:inline text-white font-medium">{session.user.username || session.user.email}</span>
               </div>
               
               {showUserMenu && (
                 <motion.div 
-                  className="absolute right-0 mt-2 w-48 bg-background/90 backdrop-blur-md border border-foreground/10 rounded-md shadow-lg overflow-hidden"
+                  className="absolute right-0 mt-2 w-48 bg-white text-black border border-gray-200 rounded-md shadow-lg overflow-hidden"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                 >
-                  <div className="p-3 border-b border-foreground/10">
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-sm text-secondary">{user.email}</p>
+                  <div className="p-3 border-b border-gray-200">
+                    <p className="font-medium">{session.user.username || session.user.email}</p>
+                    <p className="text-sm text-gray-600">{session.user.email}</p>
                   </div>
-                  <Link href="/dashboard" className="block w-full text-left p-3 hover:bg-foreground/10">
+                  <Link href="/dashboard" className="block w-full text-left p-3 hover:bg-gray-100">
                     Dashboard
                   </Link>
                   <button 
-                    className="w-full text-left p-3 hover:bg-foreground/10"
+                    className="w-full text-left p-3 hover:bg-gray-100"
                     onClick={handleLogout}
                   >
                     Sign Out
@@ -201,7 +201,7 @@ const Navbar = () => {
                 Contact
               </a>
             </Link>
-            {user ? (
+            {session ? (
               <>
                 <Link href="/dashboard" legacyBehavior>
                   <a
@@ -218,7 +218,16 @@ const Navbar = () => {
                   Sign Out
                 </button>
               </>
-            ) : null}
+            ) : (
+              <Link href="/sign-in" legacyBehavior>
+                <a
+                  className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign In
+                </a>
+              </Link>
+            )}
           </nav>
         </div>
       )}

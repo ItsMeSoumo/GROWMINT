@@ -1,16 +1,17 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useAuth } from '../pages/_app';
+import { useSession } from 'next-auth/react';
 
 export default function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
   const router = useRouter();
   
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
+    if (!loading && !session) {
+      router.push('/sign-in');
     }
-  }, [user, loading, router]);
+  }, [session, loading, router]);
 
   // Show nothing while checking authentication
   if (loading) {
@@ -18,10 +19,10 @@ export default function ProtectedRoute({ children }) {
   }
   
   // If not authenticated and not loading, don't render the children yet
-  if (!user && !loading) {
+  if (!session && !loading) {
     return null;
   }
   
   // If authenticated, render the children
   return children;
-} 
+}
