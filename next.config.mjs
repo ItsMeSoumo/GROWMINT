@@ -15,13 +15,6 @@ const nextConfig = {
       },
     ];
   },
-  // Ensure environment variables are properly loaded
-  env: {
-    MONGODB_URI: process.env.MONGODB_URI,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
-  },
 };
 
 export default nextConfig;
