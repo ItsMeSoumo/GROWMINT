@@ -63,7 +63,9 @@ export default function SignIn() {
     } else {
       // Sign up - call your API endpoint
       try {
-        const response = await fetch('/api/auth/signup', {
+        // Use full URL to avoid any redirection issues
+      const domain = process.env.NEXT_PUBLIC_DOMAIN || 'https://www.growmint.net';
+      const response = await fetch(`${domain}/api/auth/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
