@@ -1,9 +1,4 @@
 {
-  "buildCommand": "next build",
-  "outputDirectory": ".next",
   "framework": "nextjs",
-  "rewrites": [
-     { "source": "/((?!api).*)", "destination": "/" }
-  ],
   "debug": true
 }
