@@ -15,7 +15,7 @@ export default function Dashboard() {
   useEffect(() => {
     // Redirect to login if not authenticated
     if (status === 'unauthenticated') {
-      router.replace('/auth/signin');
+      router.replace('/sign-in');
     }
     
     // Initialize userData with session values if available

@@ -38,7 +38,7 @@ const Navbar = () => {
     
     // Redirect to auth page after 3 rapid clicks
     if (clickCount === 2) {
-      router.push('/auth');
+      router.push('/sign-in');
       setClickCount(0);
     }
   };
