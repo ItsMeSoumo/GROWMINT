@@ -241,7 +241,7 @@ export default function Home() {
       </div>
     <Layout>
       <Head>
-        <title>Growmint</title>
+        <title>Growmint | Premium Web Development Studio</title>
         <meta name="description" content="Luxury web development services that transform digital visions into exceptional online experiences" />
         <link rel="icon" href="/favicon.ico" />
         <style jsx global>{`
@@ -365,7 +365,7 @@ export default function Home() {
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.7, delay: 0.2}}
               >
-                Crafting <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#A78BFA] font-medium">digital experiences</span> that transcend expectations with <span className="relative italic after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gradient-to-r after:from-transparent after:via-indigo-400/50 after:to-transparent">precision design</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] to-[#F0ABFC]">cutting-edge</span> technology.
+                Crafting impact <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#60A5FA] to-[#A78BFA] font-medium">digital experiences</span> through precision-driven development and strategic marketing , combining  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] to-[#F0ABFC]">cutting-edge</span> technology with creative insight to go beyond expectations.
               </motion.p>
               
               <motion.div 
@@ -661,44 +661,42 @@ export default function Home() {
         </div>
         
         {/* Scroll prompt */}
-        <div className="absolute bottom-10 left-0 right-0 w-full flex justify-center items-center z-10">
-          <motion.div 
-            className="flex flex-col items-center"
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: [0, 10, 0]}}
-            transition={{
-              y: {
-                repeat: Infinity,
-                duration: 2,
-                repeatDelay: 0.5,
-                ease: "easeInOut"
-              },
-              opacity: {
-                delay: 1.5,
-                duration: 1
-              }
-            }}
+        <motion.div 
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: [0, 10, 0]}}
+          transition={{
+            y: {
+              repeat: Infinity,
+              duration: 2,
+              repeatDelay: 0.5,
+              ease: "easeInOut"
+            },
+            opacity: {
+              delay: 1.5,
+              duration: 1
+            }
+          }}
+        >
+          <button 
+            onClick={() => scrollToSection('about')}
+            className="flex flex-col items-center focus:outline-none group"
+            aria-label="Scroll to About section"
           >
-            <button 
-              onClick={() => scrollToSection('about')}
-              className="flex flex-col items-center focus:outline-none group"
-              aria-label="Scroll to About section"
-            >
-              <span className="mb-2 text-[#94A3B8] text-sm tracking-wider">Discover</span>
-              <div className="w-8 h-12 rounded-full border-2 border-[#94A3B8]/50 flex items-start justify-center p-1.5">
-                <motion.div 
-                  className="w-1 h-2 bg-indigo-400 rounded-full" 
-                  animate={{y: [0, 6, 0]}}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    repeatDelay: 0.5
-                  }}
-                />
-              </div>
-            </button>
-          </motion.div>
-        </div>
+            <span className="mb-2 text-[#94A3B8] text-sm tracking-wider">Discover</span>
+            <div className="w-8 h-12 rounded-full border-2 border-[#94A3B8]/50 flex items-start justify-center p-1.5">
+              <motion.div 
+                className="w-1 h-2 bg-indigo-400 rounded-full" 
+                animate={{y: [0, 6, 0]}}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatDelay: 0.5
+                }}
+              />
+            </div>
+          </button>
+        </motion.div>
         
         {/* Add keyframes for floating animation */}
         <style jsx global>{`
@@ -784,10 +782,10 @@ export default function Home() {
       <div className="container mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center relative">
         <div className="relative scroll-reveal scroll-reveal-left text-center md:text-left">
           <p className="premium-text text-accent mb-4 tracking-widest">Our Mission</p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 md:mb-8 text-glow font-display tracking-tight leading-tight">Crafting Digital Experiences That Stand Out</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 md:mb-8 text-glow font-display tracking-tight leading-tight">Building Digital Solutions That Empower Businesses</h2>
           <div className="h-1 w-32 bg-gradient-to-r from-accent to-purple-400 mb-6 md:mb-8 mx-auto md:mx-0" />
           <p className="text-white/90 mb-4 md:mb-6 text-base md:text-lg leading-relaxed font-light">
-            At Growmint, we blend technical expertise with innovative design thinking to deliver premium web solutions that exceed expectations. Our team of elite developers and designers create websites that not only look exceptional but perform flawlessly.
+          At Growmint, we combine technical expertise with creative strategy to deliver impactful digital solutions. We're a dedicated team offering both development and social media marketing services, with specialized experts focused on delivering excellence in each area.
           </p>
           <p className="text-white/90 mb-8 md:mb-10 text-base md:text-lg leading-relaxed font-light">
             We remain at the forefront of web technology, utilizing advanced tools like React, Three.js, and Framer Motion to create immersive, interactive experiences that captivate users and drive measurable results.
@@ -841,7 +839,7 @@ export default function Home() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                       </svg>
                     </div>
-                    <p className="text-[10px] sm:text-xs uppercase tracking-wider text-purple-300/90 font-medium px-1 whitespace-nowrap overflow-visible">Experience</p>
+                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Experience</p>
                   </div>
                   {/* Bottom section with number and text */}
                   <div className="text-center pb-1">
@@ -900,10 +898,8 @@ export default function Home() {
                     <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       <span className="font-montserrat">20</span><span className="text-purple-400 font-montserrat">+</span>
                     </div>
-                    <div className="flex flex-col items-center pr-0.1">
-                      <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Delivered</p>
-                      <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
-                    </div>
+                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Completed</p>
+                    <p className="text-white/40 text-xs sm:text-sm font-light">With precision & excellence</p>
                   </div>
                 </div>
               </motion.div>
@@ -912,9 +908,61 @@ export default function Home() {
           
 
           
-          {/* Premium Support Card - Now stretched across the full width */}
+          {/* Projects Delivered to Incorporation Card */}
           <SpotlightCard
-            className="custom-spotlight-card col-span-2"
+            className="custom-spotlight-card"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
+            <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
+              <motion.div 
+                className="relative overflow-hidden bg-gradient-to-br from-[#0e0b12]/95 to-[#1a1721]/95 backdrop-blur-md rounded-xl rounded-tr-[0.75rem] p-3 sm:p-4 scroll-reveal scroll-reveal-up reveal-delay-300 border border-transparent shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                whileHover={{ 
+                  y: -5, 
+                  boxShadow: "0 0 20px rgba(255,255,255,0.1), 0 0 30px rgba(168, 85, 247, 0.2)",
+                  transition: { duration: 0.1 }
+                }}
+              >
+                {/* Enhanced glow effects */}
+                <div className="absolute top-0 right-0 w-3/4 h-1/4 bg-[radial-gradient(ellipse_at_center,rgba(156,60,183,0.2)_0%,transparent_70%)]" />
+                <div className="absolute -bottom-4 -left-4 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(156,60,183,0.15)_0%,transparent_70%)]" />
+                {/* White border lighting effect */}
+                <div className="absolute inset-0 border border-white/10 rounded-xl rounded-tr-[0.75rem] opacity-80" />
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+                <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+                {/* Glass effect */}
+                <div className="absolute inset-0 bg-white/5 opacity-10" />
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  {/* Top section with icon and label */}
+                  <div className="text-center mb-2 md:mb-4">
+                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                      </svg>
+                    </div>
+                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">Delivery</p>
+                  </div>
+                  {/* Bottom section with number and text */}
+                  <div className="text-center pb-1">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                      <span className="font-montserrat">2</span><span className="text-purple-400 font-montserrat">+</span>
+                    </div>
+                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Projects</p>
+                    <p className="text-white/40 text-xs sm:text-sm font-light">Delivered to Incorporation</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </SpotlightCard>
+          
+          {/* Premium Support Card - Regular box */}
+          <SpotlightCard
+            className="custom-spotlight-card"
             spotlightColor="rgba(0, 229, 255, 0.2)"
           >
             <div className="relative p-[2px] bg-gradient-to-tr from-cyan-300 via-purple-400 to-pink-400 rounded-xl rounded-tr-[0.75rem]">
@@ -941,54 +989,23 @@ export default function Home() {
                 <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/20 to-transparent" />
                 {/* Glass effect */}
                 <div className="absolute inset-0 bg-white/5 opacity-10" />
-                <div className="relative z-10 flex flex-col md:flex-row h-full justify-between">
-                  {/* Left section with icon and label */}
-                  <div className="text-center flex-1 mb-4 md:mb-0 md:pr-6">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                      <svg className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  {/* Top section with icon and label */}
+                  <div className="text-center mb-2 md:mb-4">
+                    <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-600/30 to-purple-800/20 border border-white/10 flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                      <svg className="w-4 h-4 sm:w-6 sm:h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-purple-300/90 font-medium mt-2">Premium Support</p>
+                    <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-purple-300/90 font-medium">PREMIUM</p>
                   </div>
-                  {/* Center section with number and text */}
-                  <div className="text-center md:flex-1 md:border-l md:border-r border-purple-500/20 md:px-6">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
+                  {/* Bottom section with number and text */}
+                  <div className="text-center pb-1">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-display mb-2 md:mb-3 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                       <span className="font-montserrat">24</span><span className="text-purple-400 font-montserrat">/7</span>
                     </div>
-                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Dedicated Assistance</p>
-                    <p className="text-white/40 text-xs sm:text-sm font-light">Round-the-clock availability</p>
-                  </div>
-                  
-                  {/* Right section with additional features */}
-                  <div className="hidden md:block md:flex-1 md:pl-6 text-left">
-                    <p className="text-white/90 text-sm font-medium mb-3">Our commitment to you:</p>
-                    <ul className="space-y-2">
-                      <li className="flex items-center text-white/70 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
-                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                        Rapid response times
-                      </li>
-                      <li className="flex items-center text-white/70 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
-                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                        Expert technical assistance
-                      </li>
-                      <li className="flex items-center text-white/70 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
-                          <svg className="w-3 h-3 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                        Continuous monitoring
-                      </li>
-                    </ul>
+                    <p className="text-white text-base md:text-lg font-light tracking-wide mb-1">Support</p>
+                    <p className="text-white/40 text-xs sm:text-sm font-light">Always at your service</p>
                   </div>
                 </div>
               </motion.div>
@@ -1032,7 +1049,7 @@ export default function Home() {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-glow font-display tracking-tight leading-tight">Our Premium Services</h2>
         <div className="h-1 w-24 bg-gradient-to-r from-accent to-purple-400 mx-auto mb-6 md:mb-10" />
         <p className="text-white/90 max-w-3xl mx-auto text-base md:text-lg font-light tracking-wide">
-          We provide comprehensive web development services tailored to elevate your brand in the digital landscape.
+        We deliver a complete range of digital solutions, including custom web and app development, UI/UX design, and strategic social media marketing. Each service is crafted to elevate your brand and drive real, measurable results in the digital world.
         </p>
       </div>
       

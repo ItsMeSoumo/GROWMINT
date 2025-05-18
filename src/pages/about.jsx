@@ -223,7 +223,7 @@ const About = () => {
                 About Us
               </h1>
               <p className={`text-xl md:text-2xl text-purple-100/80 mb-12 max-w-3xl mx-auto`}>
-                We're a team of passionate developers and designers creating exceptional digital experiences.
+              We’re a dedicated team offering both development solutions and social media marketing, with specialized teams focused on delivering excellence in each area.
               </p>
               
               {/* CTA Buttons */}
@@ -258,7 +258,7 @@ const About = () => {
             <AnimatedSection>
               <div className="mb-12 text-center">
                 <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-4">
-                  About Us
+                  Inside Growmint
                 </h2>
                 <p className={`text-xl text-purple-100/80 max-w-2xl mx-auto`}>
                   At <Link href="/" className="text-purple-400 hover:text-purple-300 transition-colors">Growmint</Link>, we provide end-to-end digital solutions with a strong focus on both development and marketing.
