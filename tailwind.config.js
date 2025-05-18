@@ -15,6 +15,22 @@ module.exports = {
         warning: 'var(--warning)',
         danger: 'var(--danger)',
       },
+      animation: {
+        'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-slow-delay': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite 2s',
+        'float': 'float 12s ease-in-out infinite',
+        'text-shimmer': 'text-shimmer 2.5s ease infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        'text-shimmer': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        }
+      },
       container: {
         center: true,
         padding: '1rem',

@@ -5,20 +5,19 @@ export async function middleware(request) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
   const url = request.nextUrl
 
-  // If user is logged in and trying to access sign-in page, redirect to home
+  // If user is logged in and trying to access login page, redirect to home
   if (token && (
-    url.pathname === '/sign-in' ||
-    url.pathname === '/sign-up'
+    url.pathname === '/login'
   )) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
-  // If user is not logged in and trying to access protected pages, redirect to sign-in
+  // If user is not logged in and trying to access protected pages, redirect to login
   if (!token && (
     url.pathname.startsWith('/dashboard') ||
     url.pathname.startsWith('/admin')
   )) {
-    return NextResponse.redirect(new URL('/sign-in', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return NextResponse.next()
@@ -26,8 +25,7 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
-    '/sign-in',
-    '/sign-up',
+    '/login',
     '/dashboard/:path*',
     '/admin/:path*'
   ]

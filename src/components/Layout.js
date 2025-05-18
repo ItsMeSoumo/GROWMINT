@@ -38,7 +38,7 @@ const Navbar = () => {
     
     // Redirect to auth page after 3 rapid clicks
     if (clickCount === 2) {
-      router.push('/sign-in');
+      router.push('/login');
       setClickCount(0);
     }
   };
@@ -219,12 +219,12 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <Link href="/sign-in" legacyBehavior>
+              <Link href="/login" legacyBehavior>
                 <a
                   className="block text-white text-2xl font-semibold py-2 px-4 rounded hover:bg-accent/20 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Sign In
+                  Login
                 </a>
               </Link>
             )}
