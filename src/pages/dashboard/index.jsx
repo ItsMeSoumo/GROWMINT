@@ -24,7 +24,11 @@ import {
   FiMinusCircle, 
   FiAlertCircle,
   FiSettings,
-  FiEdit3
+  FiEdit3,
+  FiEye,
+  FiEyeOff,
+  FiLock,
+  FiSave
 } from 'react-icons/fi';
 import { BiMoney, BiTrendingUp, BiTrendingDown, BiHappy, BiSad, BiMeh } from 'react-icons/bi';
 
@@ -40,6 +44,17 @@ export default function Dashboard() {
   const [tradeAmount, setTradeAmount] = useState('');
   const [tradeType, setTradeType] = useState('buy');
   const [tradeNote, setTradeNote] = useState('');
+  
+  // Profile settings state
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState(''); // Store actual password from DB
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [profileUpdateStatus, setProfileUpdateStatus] = useState({ type: '', message: '' });
   const [journalEntries, setJournalEntries] = useState([]);
   const [journalMood, setJournalMood] = useState('neutral');
   const [journalNote, setJournalNote] = useState('');
@@ -76,56 +91,138 @@ export default function Dashboard() {
       router.replace('/login');
     }
     
-    // Initialize userData with session values if available
-    if (session?.user) {
-      setUserData(prevData => ({
-        ...prevData,
-        money: session.user.money || 0,
-        presentmoney: session.user.presentmoney || 0,
-        profit: session.user.profit || 0
-      }));
-    }
+    const fetchData = async () => {
+      try {
+        setIsRefreshing(true);
+        
+        // Initialize with session data immediately
+        if (session?.user) {
+          setUserData({
+            id: session.user.id,
+            email: session.user.email,
+            username: session.user.username,
+            password: session.user.password || '', // Include password
+            isVerified: session.user.isVerified,
+            money: session.user.money || 0,
+            presentmoney: session.user.presentmoney || 0,
+            profit: session.user.profit || 0,
+            transactions: session.user.transactions || [],
+            createdAt: session.user.createdAt
+          });
+          
+          // Initialize username and password from session
+          setUsername(session.user.username || '');
+          setPassword(session.user.password || ''); // Set password from session
+        }
+        
+        // Fetch latest data from API
+        const response = await fetch('/api/user/update-finances');
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data.user);
+          setUsername(data.user.username || '');
+          setPassword(data.user.password || ''); // Set password from API response
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setIsRefreshing(false);
+      }
+    };
     
     // Fetch user data when session is available
-    if (session?.user?.id) {
-      fetchUserData();
+    if (session) {
+      fetchData();
     }
   }, [session, status, router]);
   
-  const fetchUserData = async () => {
+  const refreshData = async () => {
     try {
       setIsRefreshing(true);
       
-      // Initialize with session data immediately
-      if (session?.user) {
-        setUserData(prevData => ({
-          ...prevData,
-          id: session.user.id,
-          email: session.user.email,
-          username: session.user.username,
-          isVerified: session.user.isVerified,
-          money: session.user.money || 0,
-          presentmoney: session.user.presentmoney || 0,
-          profit: session.user.profit || 0,
-          createdAt: session.user.createdAt
-        }));
-      }
-      
-      // Then fetch latest data from the API
+      // Fetch latest data from API
       const response = await fetch('/api/user/update-finances');
       if (response.ok) {
         const data = await response.json();
         setUserData(data.user);
+        setUsername(data.user.username || '');
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error refreshing user data:', error);
     } finally {
       setIsRefreshing(false);
     }
   };
   
-  const refreshData = async () => {
-    await fetchUserData();
+  // Handle profile update
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    
+    // Reset status message
+    setProfileUpdateStatus({ type: '', message: '' });
+    
+    // Validate form
+    if (newPassword && newPassword !== confirmPassword) {
+      setProfileUpdateStatus({
+        type: 'error',
+        message: 'New passwords do not match'
+      });
+      return;
+    }
+    
+    // Check if at least one field is being updated
+    if (!username && !newPassword) {
+      setProfileUpdateStatus({
+        type: 'error',
+        message: 'No changes to save'
+      });
+      return;
+    }
+    
+    try {
+      setIsUpdatingProfile(true);
+      
+      // Simple API call with session-based authentication
+      const response = await fetch('/api/user/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username,
+          newPassword: newPassword || password // Use existing password if no new one
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Show success message briefly
+        setProfileUpdateStatus({
+          type: 'success',
+          message: 'Profile updated. Reloading page...'
+        });
+        
+        // Reload the entire page after a short delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        // Show error message
+        setProfileUpdateStatus({
+          type: 'error',
+          message: data.message || 'Failed to update profile'
+        });
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setProfileUpdateStatus({
+        type: 'error',
+        message: 'Something went wrong. Please try again.'
+      });
+    } finally {
+      setIsUpdatingProfile(false);
+    }
   };
   
   // Helper functions for new features
@@ -307,8 +404,21 @@ export default function Dashboard() {
               </div>
             </motion.div>
             
-            {/* Refresh data button */}
-            <div className="flex justify-end">
+            {/* Action buttons */}
+            <div className="flex justify-end space-x-4">
+              <motion.button 
+                onClick={() => setShowProfileSettings(!showProfileSettings)}
+                className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-lg transition-all duration-300"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FiSettings />
+                <span>Profile Settings</span>
+              </motion.button>
+              
               <motion.button 
                 onClick={refreshData} 
                 disabled={isRefreshing}
@@ -323,6 +433,159 @@ export default function Dashboard() {
                 <span>{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
               </motion.button>
             </div>
+            
+            {/* Profile Settings Panel */}
+            <AnimatePresence>
+              {showProfileSettings && (
+                <motion.div
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden border border-white/10 mb-6"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                        <FiUser className="text-indigo-300" />
+                        Profile Settings
+                      </h3>
+                      <button 
+                        onClick={() => setShowProfileSettings(false)}
+                        className="text-indigo-200 hover:text-white"
+                      >
+                        <FiXCircle className="text-xl" />
+                      </button>
+                    </div>
+                    
+                    {/* Profile Update Status Message */}
+                    {profileUpdateStatus.message && (
+                      <div className={`mb-4 p-3 rounded-lg ${
+                        profileUpdateStatus.type === 'success' 
+                          ? 'bg-green-500/20 text-green-200 border border-green-500/30' 
+                          : 'bg-red-500/20 text-red-200 border border-red-500/30'
+                      }`}>
+                        <p className="flex items-center gap-2">
+                          {profileUpdateStatus.type === 'success' 
+                            ? <FiCheckCircle className="text-green-400" /> 
+                            : <FiAlertCircle className="text-red-400" />
+                          }
+                          {profileUpdateStatus.message}
+                        </p>
+                      </div>
+                    )}
+                    
+                    <form onSubmit={handleProfileUpdate} className="space-y-6">
+                      {/* Username Field */}
+                      <div>
+                        <label htmlFor="username" className="block text-indigo-200 mb-2">Username</label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <FiUser className="text-indigo-400" />
+                          </span>
+                          <input
+                            type="text"
+                            id="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Enter your username"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Current Password Field */}
+                      <div>
+                        <label htmlFor="currentPassword" className="block text-indigo-200 mb-2">Current Password</label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <FiLock className="text-indigo-400" />
+                          </span>
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            id="currentPassword"
+                            value={password} // Display actual password from database
+                            readOnly
+                            className="bg-white/5 border border-white/10 text-white rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Your current password"
+                          />
+                          <button
+                            type="button"
+                            className="absolute inset-y-0 right-0 flex items-center pr-3"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <FiEyeOff className="text-indigo-400 hover:text-indigo-300" />
+                            ) : (
+                              <FiEye className="text-indigo-400 hover:text-indigo-300" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* New Password Field */}
+                      <div>
+                        <label htmlFor="newPassword" className="block text-indigo-200 mb-2">New Password</label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <FiLock className="text-indigo-400" />
+                          </span>
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            id="newPassword"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Enter your new password"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Confirm Password Field */}
+                      <div>
+                        <label htmlFor="confirmPassword" className="block text-indigo-200 mb-2">Confirm New Password</label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <FiLock className="text-indigo-400" />
+                          </span>
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            id="confirmPassword"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="bg-white/5 border border-white/10 text-white rounded-lg block w-full pl-10 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Confirm your new password"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Submit Button */}
+                      <div className="flex justify-end">
+                        <motion.button
+                          type="submit"
+                          disabled={isUpdatingProfile}
+                          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-70"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                        >
+                          {isUpdatingProfile ? (
+                            <>
+                              <FiRefreshCw className="animate-spin" />
+                              <span>Updating...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FiSave />
+                              <span>Save Changes</span>
+                            </>
+                          )}
+                        </motion.button>
+                      </div>
+                    </form>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             
             {/* Financial Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

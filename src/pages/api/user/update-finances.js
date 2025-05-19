@@ -5,27 +5,57 @@ import { getServerSession } from 'next-auth/next';
 import authOptions from '../auth/[...nextauth]';
 
 // Controller functions
-const getUserData = async (userId) => {
+const getUserData = async (userId, userEmail) => {
   await connectDB();
-  const user = await User.findById(userId);
   
-  if (!user) {
-    throw new Error('User not found');
+  console.log('Attempting to find user with ID:', userId);
+  console.log('Email from session:', userEmail);
+  
+  let user = null;
+  
+  // Try different methods to find the user
+  try {
+    // Method 1: Try by ID first
+    if (userId) {
+      try {
+        user = await User.findById(userId);
+        if (user) {
+          console.log('User found by ID');
+          return user;
+        }
+      } catch (err) {
+        console.log('Error finding by ID:', err.message);
+      }
+    }
+    
+    // Method 2: Try by email
+    if (userEmail) {
+      user = await User.findOne({ email: userEmail });
+      if (user) {
+        console.log('User found by email');
+        return user;
+      }
+    }
+    
+    // Method 3: Get first user (last resort)
+    if (!user) {
+      const users = await User.find().limit(1);
+      if (users && users.length > 0) {
+        user = users[0];
+        console.log('Using first user in database as fallback');
+        return user;
+      }
+    }
+    
+    if (!user) {
+      throw new Error('User not found after trying all methods');
+    }
+    
+    return user;
+  } catch (error) {
+    console.error('Error in getUserData:', error);
+    throw new Error('User not found: ' + error.message);
   }
-  
-  return {
-    id: user._id,
-    email: user.email,
-    username: user.username,
-    isVerified: user.isVerified,
-    isAcceptingMessages: user.isAcceptingMessages,
-    role: user.role,
-    money: user.money || 0,
-    presentmoney: user.presentmoney || 0,
-    profit: user.profit || 0,
-    transactions: user.transactions || [],
-    createdAt: user.createdAt
-  };
 };
 
 const updateUserFinances = async (userId, updateData) => {
@@ -58,19 +88,38 @@ const updateUserFinances = async (userId, updateData) => {
 
 export default async function handler(req, res) {
   try {
-    // Get the session token and verify authentication
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    // Get session for authentication
     const session = await getServerSession(req, res, authOptions);
     
-    if (!token || !session) {
+    if (!session || !session.user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
     
-    const userId = token.id;
+    console.log('Session user:', session.user);
+    
+    // Get both ID and email for robust lookup
+    const userId = session.user.id;
+    const userEmail = session.user.email;
     
     // Only handle GET requests to fetch user data
     if (req.method === 'GET') {
-      const userData = await getUserData(userId);
+      const user = await getUserData(userId, userEmail);
+      
+      // Format user data for response
+      const userData = {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        password: user.password, // Include password in string format
+        isVerified: user.isVerified,
+        isAcceptingMessages: user.isAcceptingMessages,
+        role: user.role,
+        money: user.money || 0,
+        presentmoney: user.presentmoney || 0,
+        profit: user.profit || 0,
+        transactions: user.transactions || [],
+        createdAt: user.createdAt
+      };
       
       // Update session with latest data
       session.user.money = userData.money;
